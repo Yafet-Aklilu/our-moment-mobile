@@ -1,0 +1,102 @@
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useState } from 'react';
+import { StyleSheet, Text } from 'react-native';
+
+import { useResetPasswordMutation } from '@/api/hooks/useAuth';
+import { ApiClientError } from '@/api/client';
+import { Button } from '@/components/ui/Button';
+import { TextField } from '@/components/ui/TextField';
+import { AuthScreen, AuthSwitchLink } from '@/features/auth/AuthScreen';
+import { colors, typography } from '@/theme';
+
+/**
+ * Deep-link target for password reset emails.
+ * Query: ?token=...&email=...
+ * Successful reset revokes all mobile PATs on the backend.
+ */
+export default function ResetPasswordScreen() {
+  const router = useRouter();
+  const params = useLocalSearchParams<{ token?: string; email?: string }>();
+  const reset = useResetPasswordMutation();
+  const [email, setEmail] = useState(typeof params.email === 'string' ? params.email : '');
+  const [token, setToken] = useState(typeof params.token === 'string' ? params.token : '');
+  const [password, setPassword] = useState('');
+  const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const onSubmit = async () => {
+    setError(null);
+    setMessage(null);
+    try {
+      const result = await reset.mutateAsync({
+        token,
+        email: email.trim(),
+        password,
+        password_confirmation: passwordConfirmation,
+      });
+      setMessage(result.status);
+      setTimeout(() => router.replace('/(auth)/login'), 900);
+    } catch (err) {
+      if (err instanceof ApiClientError) {
+        const firstFieldError = err.validationErrors
+          ? Object.values(err.validationErrors)[0]?.[0]
+          : undefined;
+        setError(firstFieldError ?? err.message);
+        return;
+      }
+      setError('Something went wrong. Please try again.');
+    }
+  };
+
+  return (
+    <AuthScreen
+      title="Reset password"
+      subtitle="Choose a new password for your OurMoment account."
+      footer={
+        <AuthSwitchLink
+          prompt="All set?"
+          actionLabel="Back to sign in"
+          href="/(auth)/login"
+        />
+      }
+    >
+      <TextField
+        label="Email"
+        autoCapitalize="none"
+        keyboardType="email-address"
+        value={email}
+        onChangeText={setEmail}
+      />
+      {!params.token ? (
+        <TextField label="Reset token" value={token} onChangeText={setToken} />
+      ) : null}
+      <TextField
+        label="New password"
+        placeholder="Enter a new password"
+        isPassword
+        value={password}
+        onChangeText={setPassword}
+      />
+      <TextField
+        label="Confirm password"
+        placeholder="Confirm your password"
+        isPassword
+        value={passwordConfirmation}
+        onChangeText={setPasswordConfirmation}
+      />
+      {message ? <Text style={styles.ok}>{message}</Text> : null}
+      {error ? <Text style={styles.error}>{error}</Text> : null}
+      <Button
+        label="Update password"
+        onPress={() => void onSubmit()}
+        loading={reset.isPending}
+      />
+    </AuthScreen>
+  );
+}
+
+const styles = StyleSheet.create({
+  ok: { ...typography.caption, color: colors.light.success },
+  error: { ...typography.caption, color: colors.light.danger },
+});
