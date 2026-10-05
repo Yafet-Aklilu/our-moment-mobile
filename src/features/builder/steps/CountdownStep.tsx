@@ -9,6 +9,7 @@ import {
   useUpdateMomentSettingsMutation,
   useUploadMomentMediaMutation,
 } from '@/api/hooks/useMoments';
+import { PageIntro } from '@/components/ui/PageIntro';
 import { BuilderSaveStatus } from '@/features/builder/BuilderSaveStatus';
 import { asSettings } from '@/features/builder/contentHelpers';
 import { COUNTDOWN_STYLES, JOURNEY_END_STEP_ID, JOURNEY_HEAD_STEP_ID } from '@/features/builder/experienceOptions';
@@ -89,8 +90,11 @@ export function CountdownStep({ moment }: Props) {
 
   return (
     <View style={styles.root}>
-      <Text style={styles.title}>Countdown</Text>
-      <Text style={styles.sub}>A short wait before your message shows up.</Text>
+      <PageIntro
+        title="Countdown"
+        body="A short wait before your message shows up."
+        style={styles.intro}
+      />
 
       <ToggleRow label="Enable countdown" value={enabled} onChange={onToggle} disabled={readOnly} />
 
@@ -248,29 +252,23 @@ function JourneyImageSlot({
 
 const styles = StyleSheet.create({
   root: {
-    gap: spacing.md,
+    gap: spacing.lg,
   },
-  title: {
-    ...typography.titleSmall,
-  },
-  sub: {
-    ...typography.body,
-    color: colors.light.textSecondary,
-    marginTop: -spacing.sm,
+  intro: {
+    marginBottom: 0,
   },
   section: {
-    gap: spacing.sm,
+    gap: spacing.md,
   },
   label: {
     ...typography.label,
     color: colors.light.text,
-    marginTop: spacing.xs,
   },
   numberInput: {
     ...typography.body,
     borderWidth: 1.5,
-    borderColor: colors.light.borderStrong,
-    borderRadius: radii.md,
+    borderColor: colors.light.border,
+    borderRadius: radii.lg,
     backgroundColor: colors.light.surface,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
@@ -279,8 +277,8 @@ const styles = StyleSheet.create({
   textInput: {
     ...typography.body,
     borderWidth: 1.5,
-    borderColor: colors.light.borderStrong,
-    borderRadius: radii.md,
+    borderColor: colors.light.border,
+    borderRadius: radii.lg,
     backgroundColor: colors.light.surface,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
@@ -306,7 +304,7 @@ const styles = StyleSheet.create({
   journeyImage: {
     width: '100%',
     height: 100,
-    borderRadius: radii.md,
+    borderRadius: radii.lg,
     backgroundColor: colors.light.surfaceMuted,
   },
   journeyRemove: {
@@ -322,10 +320,10 @@ const styles = StyleSheet.create({
   },
   journeyUpload: {
     height: 100,
-    borderRadius: radii.md,
+    borderRadius: radii.lg,
     borderWidth: 1.5,
     borderStyle: 'dashed',
-    borderColor: colors.light.borderStrong,
+    borderColor: 'rgba(255, 108, 113, 0.28)',
     backgroundColor: colors.light.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',

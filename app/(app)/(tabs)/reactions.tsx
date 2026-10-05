@@ -1,23 +1,17 @@
-import { Link } from 'expo-router';
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useMomentsQuery } from '@/api/hooks/useMoments';
-import { Button } from '@/components/ui/Button';
+import { ErrorState } from '@/components/ui/ErrorState';
+import { LoadingState } from '@/components/ui/LoadingState';
+import { ReactionMomentCard } from '@/features/reactions/ReactionMomentCard';
 import { ReactionsEmptyState } from '@/features/reactions/ReactionsEmptyState';
-import { colors, radii, shadows, spacing, typography } from '@/theme';
-import type { MomentSummary } from '@/types/api';
+import { colors, spacing, typography } from '@/theme';
 
 /**
- * Reactions inbox — moments that have received reactions.
- * Uses activated moments + reactions_count from the existing API.
+ * Reactions — personal replies to Moments you’ve sent.
+ * Runtime: ReactionMomentCard list OR ReactionsEmptyState.
+ * Data: activated moments with reactions_count > 0 (existing API).
  */
 export default function ReactionsScreen() {
   const insets = useSafeAreaInsets();
@@ -26,26 +20,16 @@ export default function ReactionsScreen() {
     moments.data?.data?.filter((m) => m.reactions_count > 0) ?? [];
 
   if (moments.isLoading && !moments.data) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator color={colors.brand.pink} size="large" />
-      </View>
-    );
+    return <LoadingState label="Gathering replies…" />;
   }
 
   if (moments.isError && !moments.data) {
     return (
-      <View style={styles.centered}>
-        <Text style={styles.errorTitle}>Couldn’t load reactions</Text>
-        <Text style={styles.errorBody}>
-          Check your connection and try again.
-        </Text>
-        <Button
-          label="Try again"
-          variant="secondary"
-          onPress={() => void moments.refetch()}
-        />
-      </View>
+      <ErrorState
+        title="Couldn’t load reactions"
+        body="Check your connection and try again."
+        onAction={() => void moments.refetch()}
+      />
     );
   }
 
@@ -55,7 +39,10 @@ export default function ReactionsScreen() {
         style={[
           styles.screen,
           styles.emptyScreen,
-          { paddingBottom: insets.bottom + 100 },
+          {
+            paddingTop: insets.top + spacing.lg,
+            paddingBottom: insets.bottom + 100,
+          },
         ]}
       >
         <ReactionsEmptyState />
@@ -68,44 +55,25 @@ export default function ReactionsScreen() {
       style={styles.scroll}
       contentContainerStyle={[
         styles.content,
-        { paddingBottom: insets.bottom + 110 },
+        {
+          paddingTop: insets.top + spacing.md,
+          paddingBottom: insets.bottom + 110,
+        },
       ]}
       showsVerticalScrollIndicator={false}
     >
+      <Text style={styles.eyebrow}>Replies</Text>
+      <Text style={styles.title}>How they felt</Text>
       <Text style={styles.intro}>
-        See how people respond when they open your moments.
+        When someone opens your Moment and responds, it shows up here — softly, personally.
       </Text>
+
       <View style={styles.list}>
         {withReactions.map((m) => (
-          <ReactionMomentRow key={m.id} moment={m} />
+          <ReactionMomentCard key={m.id} moment={m} />
         ))}
       </View>
     </ScrollView>
-  );
-}
-
-function ReactionMomentRow({ moment }: { moment: MomentSummary }) {
-  const count = moment.reactions_count;
-  return (
-    <Link href={`/(app)/moments/${moment.id}`} asChild>
-      <Pressable>
-        <View style={[styles.row, shadows.card]}>
-          <View style={styles.rowMain}>
-            <Text style={styles.title} numberOfLines={1}>
-              {moment.receiver_name?.trim() || 'Moment'}
-            </Text>
-            <Text style={styles.meta} numberOfLines={1}>
-              {moment.template?.title || moment.template?.name || 'Sent Moment'}
-            </Text>
-          </View>
-          <View style={styles.countPill}>
-            <Text style={styles.countText}>
-              {count} reaction{count === 1 ? '' : 's'}
-            </Text>
-          </View>
-        </View>
-      </Pressable>
-    </Link>
   );
 }
 
@@ -116,8 +84,7 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.sm,
-    gap: spacing.md,
+    gap: spacing.sm,
   },
   screen: {
     flex: 1,
@@ -125,62 +92,30 @@ const styles = StyleSheet.create({
   },
   emptyScreen: {
     paddingHorizontal: spacing.lg,
-  },
-  centered: {
-    flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: spacing.xl,
-    gap: spacing.sm,
-    backgroundColor: colors.light.background,
+  },
+  eyebrow: {
+    ...typography.caption,
+    color: colors.brand.pinkDeep,
+    fontFamily: 'Manrope_700Bold',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    fontSize: 11,
+  },
+  title: {
+    ...typography.display,
+    fontSize: 28,
+    lineHeight: 34,
+    letterSpacing: -0.4,
+    color: '#2a1f24',
   },
   intro: {
     ...typography.body,
-    color: colors.light.textSecondary,
+    color: '#6b5560',
+    lineHeight: 22,
+    marginBottom: spacing.md,
   },
   list: {
-    gap: spacing.sm,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
     gap: spacing.md,
-    backgroundColor: colors.light.surface,
-    borderRadius: radii.xl,
-    padding: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.light.border,
-  },
-  rowMain: {
-    flex: 1,
-    gap: 4,
-    minWidth: 0,
-  },
-  title: {
-    ...typography.subtitle,
-  },
-  meta: {
-    ...typography.caption,
-  },
-  countPill: {
-    borderRadius: radii.pill,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    backgroundColor: 'rgba(255,108,113,0.12)',
-  },
-  countText: {
-    ...typography.label,
-    fontSize: 12,
-    color: colors.brand.pinkDeep,
-  },
-  errorTitle: {
-    ...typography.titleSmall,
-    textAlign: 'center',
-  },
-  errorBody: {
-    ...typography.body,
-    color: colors.light.textSecondary,
-    textAlign: 'center',
-    marginBottom: spacing.sm,
   },
 });

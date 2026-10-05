@@ -2,10 +2,11 @@ import { useRef, useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { useSaveMomentStepMutation } from '@/api/hooks/useMoments';
+import { PageIntro } from '@/components/ui/PageIntro';
 import { BuilderSaveStatus } from '@/features/builder/BuilderSaveStatus';
 import { plainTextToHtml, readContentValue, stripHtml } from '@/features/builder/contentHelpers';
-import { useAutosaveStatus } from '@/features/builder/useAutosaveStatus';
 import type { BuilderStep } from '@/features/builder/types';
+import { useAutosaveStatus } from '@/features/builder/useAutosaveStatus';
 import { colors, radii, spacing, typography } from '@/theme';
 import type { Moment } from '@/types/api';
 
@@ -31,8 +32,10 @@ export function StoryMessageStep({ moment, step }: Props) {
   const initial = stripHtml(readContentValue(moment.content, step.stepId));
   const [text, setText] = useState(initial);
   const savedValueRef = useRef(initial);
+  const [focused, setFocused] = useState(false);
 
   const onBlur = () => {
+    setFocused(false);
     if (readOnly) return;
     const trimmed = text;
     if (trimmed === savedValueRef.current) return;
@@ -49,13 +52,17 @@ export function StoryMessageStep({ moment, step }: Props) {
 
   return (
     <View style={styles.root}>
-      <Text style={styles.title}>{step.label}</Text>
-      {step.description ? <Text style={styles.sub}>{step.description}</Text> : null}
+      <PageIntro
+        title={step.label}
+        body={step.description || 'Write it in your own words.'}
+        style={styles.intro}
+      />
 
-      <View style={styles.fieldShell}>
+      <View style={[styles.fieldShell, focused && styles.fieldFocused]}>
         <TextInput
           value={text}
           onChangeText={setText}
+          onFocus={() => setFocused(true)}
           onBlur={onBlur}
           editable={!readOnly}
           multiline
@@ -80,31 +87,32 @@ const styles = StyleSheet.create({
   root: {
     gap: spacing.md,
   },
-  title: {
-    ...typography.titleSmall,
-  },
-  sub: {
-    ...typography.body,
-    color: colors.light.textSecondary,
-    marginTop: -spacing.sm,
+  intro: {
+    marginBottom: 0,
   },
   fieldShell: {
-    minHeight: 160,
-    borderRadius: radii.md,
+    minHeight: 180,
+    borderRadius: radii.lg,
     borderWidth: 1.5,
-    borderColor: colors.light.borderStrong,
+    borderColor: colors.light.border,
     backgroundColor: colors.light.surface,
     padding: spacing.md,
+  },
+  fieldFocused: {
+    borderColor: colors.brand.pink,
+    backgroundColor: colors.light.surfaceWarm,
   },
   input: {
     ...typography.body,
     flex: 1,
+    minHeight: 148,
     color: colors.light.text,
   },
   counter: {
     ...typography.caption,
+    fontSize: 12,
     color: colors.light.textMuted,
     textAlign: 'right',
-    marginTop: -spacing.sm,
+    marginTop: -spacing.xs,
   },
 });

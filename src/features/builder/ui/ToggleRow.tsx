@@ -36,6 +36,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.md,
     paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: radii.lg,
+    backgroundColor: colors.light.surface,
+    borderWidth: 1,
+    borderColor: colors.light.border,
   },
   textCol: {
     flex: 1,
@@ -43,15 +48,17 @@ const styles = StyleSheet.create({
   },
   label: {
     ...typography.label,
+    color: colors.light.text,
   },
   hint: {
     ...typography.caption,
+    fontSize: 12,
   },
   track: {
-    width: 52,
-    height: 32,
+    width: 48,
+    height: 30,
     borderRadius: radii.pill,
-    backgroundColor: colors.light.borderStrong,
+    backgroundColor: colors.light.surfaceContainer,
     padding: 3,
     justifyContent: 'center',
   },
@@ -59,10 +66,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.brand.pink,
   },
   thumb: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: '#fff',
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: colors.light.surface,
   },
   thumbOn: {
     alignSelf: 'flex-end',

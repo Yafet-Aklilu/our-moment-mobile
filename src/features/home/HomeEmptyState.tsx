@@ -1,47 +1,44 @@
-import { Link } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { StyleSheet, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
-import { Button } from '@/components/ui/Button';
-import { colors, radii, spacing, typography } from '@/theme';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { colors, radii, spacing } from '@/theme';
 
 export function HomeEmptyState() {
+  const router = useRouter();
+
   return (
-    <View style={styles.card}>
-      <Text style={styles.eyebrow}>Your moments</Text>
-      <Text style={styles.title}>Nothing here yet</Text>
-      <Text style={styles.body}>
-        Choose a style, add your words and photos, then activate and share a private
-        link they’ll love.
-      </Text>
-      <Link href="/(app)/(tabs)/create" asChild>
-        <Button label="Create a moment" />
-      </Link>
+    <View style={styles.wrap}>
+      <LinearGradient
+        colors={[colors.brand.soft, colors.light.surfaceWarm, '#FFFFFF']}
+        style={styles.wash}
+      >
+        <EmptyState
+          eyebrow="Your Moments"
+          icon="heart"
+          title="Your space is waiting"
+          body="Choose a style, add your words and photos, then send a private Moment they’ll open — and keep."
+          actionLabel="Create a Moment"
+          onAction={() => router.push('/(app)/(tabs)/create')}
+          style={styles.empty}
+        />
+      </LinearGradient>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.light.surfaceWarm,
-    borderRadius: radii.xl,
-    padding: spacing.lg,
+  wrap: {
+    borderRadius: radii.xxl,
+    overflow: 'hidden',
     borderWidth: 1,
     borderColor: colors.light.border,
-    gap: spacing.sm,
   },
-  eyebrow: {
-    ...typography.caption,
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    color: colors.brand.pinkDeep,
-    fontFamily: 'Manrope_600SemiBold',
+  wash: {
+    paddingVertical: spacing.md,
   },
-  title: {
-    ...typography.titleSmall,
-  },
-  body: {
-    ...typography.body,
-    color: colors.light.textSecondary,
-    marginBottom: spacing.sm,
+  empty: {
+    paddingVertical: spacing.xl,
   },
 });

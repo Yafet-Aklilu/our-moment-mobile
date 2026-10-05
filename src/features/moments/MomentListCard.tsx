@@ -3,6 +3,7 @@ import { Image } from 'expo-image';
 import { Link } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import { PressableScale } from '@/animation/PressableScale';
 import { MomentStatusPill } from '@/features/home/MomentStatusPill';
@@ -29,7 +30,7 @@ type Props = {
 };
 
 /**
- * List card → Moment details (edit / preview / activate / share live there).
+ * My Moments card — cover-forward experience, not a file row.
  */
 export function MomentListCard({ moment, index = 0 }: Props) {
   const title = moment.receiver_name?.trim() || 'Untitled moment';
@@ -47,59 +48,52 @@ export function MomentListCard({ moment, index = 0 }: Props) {
       <Link href={`/(app)/moments/${moment.id}`} asChild>
         <PressableScale>
           <View style={[styles.card, shadows.card]}>
-            <View style={styles.top}>
+            <View style={styles.coverWrap}>
               {cover ? (
                 <Image
                   source={{ uri: cover }}
-                  style={styles.cover}
+                  style={StyleSheet.absoluteFill}
                   contentFit="cover"
-                  transition={200}
+                  transition={220}
                 />
               ) : (
-                <View style={[styles.cover, styles.coverFallback]}>
-                  <Ionicons name="heart" size={20} color={colors.brand.pink} />
-                </View>
+                <LinearGradient
+                  colors={[colors.brand.pink, colors.brand.yellow]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={StyleSheet.absoluteFill}
+                />
               )}
-
-              <View style={styles.main}>
-                <View style={styles.titleRow}>
-                  <Text style={styles.title} numberOfLines={1}>
-                    {title}
-                  </Text>
-                  <MomentStatusPill state={moment.state} compact />
-                </View>
-                <Text style={styles.styleName} numberOfLines={1}>
-                  {styleName}
-                </Text>
-                <View style={styles.metaRow}>
-                  {date ? <Text style={styles.meta}>{date}</Text> : null}
-                  {moment.reactions_count > 0 ? (
-                    <Text style={styles.reactions}>
-                      {moment.reactions_count} reaction
-                      {moment.reactions_count === 1 ? '' : 's'}
-                    </Text>
-                  ) : null}
-                </View>
+              <LinearGradient
+                colors={['transparent', 'rgba(28,24,20,0.5)']}
+                style={styles.coverFade}
+              />
+              <View style={styles.coverBadge}>
+                <MomentStatusPill state={moment.state} compact />
               </View>
+              <Text style={styles.coverTitle} numberOfLines={2}>
+                {title}
+              </Text>
             </View>
 
-            <View style={styles.footer}>
-              <Text style={styles.hint}>
-                {isDraft
-                  ? 'Still editing — tap to continue'
-                  : moment.public_share_url
-                    ? 'Sent — share or view details'
-                    : 'Sent'}
+            <View style={styles.body}>
+              <Text style={styles.styleName} numberOfLines={1}>
+                {styleName}
+                {date ? ` · ${date}` : ''}
               </Text>
-              <View style={styles.actionChip}>
-                <Text style={styles.actionText}>
-                  {isDraft ? 'Continue' : 'Open'}
+
+              <View style={styles.footer}>
+                <Text style={styles.hint}>
+                  {isDraft
+                    ? 'Still shaping this Moment'
+                    : moment.reactions_count > 0
+                      ? `${moment.reactions_count} reaction${moment.reactions_count === 1 ? '' : 's'}`
+                      : 'Sent — waiting for a reply'}
                 </Text>
-                <Ionicons
-                  name="chevron-forward"
-                  size={14}
-                  color={colors.brand.pinkDeep}
-                />
+                <View style={styles.actionChip}>
+                  <Text style={styles.actionText}>{isDraft ? 'Continue' : 'Open'}</Text>
+                  <Ionicons name="arrow-forward" size={14} color={colors.brand.pinkDeep} />
+                </View>
               </View>
             </View>
           </View>
@@ -111,78 +105,59 @@ export function MomentListCard({ moment, index = 0 }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.light.surface,
-    borderRadius: radii.xl,
-    padding: spacing.md,
+    backgroundColor: '#FFFFFF',
+    borderRadius: radii.xxl,
+    overflow: 'hidden',
     borderWidth: 1,
     borderColor: colors.light.border,
-    gap: spacing.sm,
   },
-  top: {
-    flexDirection: 'row',
-    gap: spacing.md,
-  },
-  cover: {
-    width: 64,
-    height: 64,
-    borderRadius: radii.md,
+  coverWrap: {
+    height: 140,
+    justifyContent: 'flex-end',
+    padding: spacing.md,
     backgroundColor: colors.light.surfaceMuted,
   },
-  coverFallback: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(255,108,113,0.12)',
+  coverFade: {
+    ...StyleSheet.absoluteFill,
   },
-  main: {
-    flex: 1,
-    gap: 4,
-    minWidth: 0,
+  coverBadge: {
+    position: 'absolute',
+    top: spacing.md,
+    left: spacing.md,
   },
-  titleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
+  coverTitle: {
+    ...typography.titleSmall,
+    color: '#FFFFFF',
+    fontSize: 20,
+    lineHeight: 26,
   },
-  title: {
-    ...typography.subtitle,
-    flex: 1,
-    fontSize: 17,
+  body: {
+    padding: spacing.md,
+    gap: spacing.sm,
   },
   styleName: {
     ...typography.caption,
-  },
-  metaRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
-    marginTop: 2,
-  },
-  meta: {
-    ...typography.caption,
-    color: colors.light.textMuted,
-  },
-  reactions: {
-    ...typography.label,
-    fontSize: 12,
-    color: colors.brand.pinkDeep,
+    color: '#6b5560',
   },
   footer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: spacing.sm,
-    paddingTop: spacing.xs,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.light.border,
   },
   hint: {
     ...typography.caption,
     flex: 1,
+    color: colors.light.textSecondary,
   },
   actionChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 2,
+    gap: 4,
+    backgroundColor: colors.brand.pinkSoft,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 6,
+    borderRadius: radii.pill,
   },
   actionText: {
     ...typography.label,

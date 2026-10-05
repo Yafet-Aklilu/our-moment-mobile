@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Link, type Href } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { colors, radii, spacing, typography } from '@/theme';
+import { colors, radii, shadows, spacing, typography } from '@/theme';
 
 type Row =
   | {
@@ -26,7 +26,7 @@ type Props = {
 
 export function AccountSettingsList({ rows }: Props) {
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, shadows.card]}>
       {rows.map((row, index) => {
         const content = (
           <View
@@ -87,8 +87,8 @@ const styles = StyleSheet.create({
   icon: {
     width: 40,
     height: 40,
-    borderRadius: 12,
-    backgroundColor: colors.light.surfaceMuted,
+    borderRadius: radii.md,
+    backgroundColor: colors.brand.pinkSoft,
     alignItems: 'center',
     justifyContent: 'center',
   },

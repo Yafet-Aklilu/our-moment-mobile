@@ -1,11 +1,14 @@
-import { Link } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useMeQuery } from '@/api/hooks/useAuth';
 import { useMomentsQuery } from '@/api/hooks/useMoments';
+import { LoadingState } from '@/components/ui/LoadingState';
+import { SectionLabel } from '@/components/ui/SectionLabel';
 import { ActiveMomentCard } from '@/features/home/ActiveMomentCard';
 import { HomeEmptyState } from '@/features/home/HomeEmptyState';
 import { HomeHeader } from '@/features/home/HomeHeader';
@@ -13,7 +16,7 @@ import { HomeHeroCard } from '@/features/home/HomeHeroCard';
 import { HomeScanFab } from '@/features/home/HomeScanFab';
 import { RecentMomentCard } from '@/features/home/RecentMomentCard';
 import { useProfileStore } from '@/state/profileStore';
-import { colors, motion, spacing, typography } from '@/theme';
+import { colors, motion, spacing } from '@/theme';
 import type { MomentSummary } from '@/types/api';
 
 function pickFeatured(moments: MomentSummary[]): MomentSummary | null {
@@ -24,12 +27,13 @@ function pickFeatured(moments: MomentSummary[]): MomentSummary | null {
 }
 
 /**
- * Home — creator landing.
- * Layout structure inspired by the reference (header → action hero → featured → recent),
- * expressed with OurMoment product language and tokens.
+ * Home — personal OurMoment space (not a dashboard).
+ * Runtime: this screen + HomeHeader / HomeHeroCard / ActiveMomentCard /
+ * RecentMomentCard / HomeEmptyState / HomeScanFab.
  */
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   const me = useMeQuery();
   const momentsQuery = useMomentsQuery();
   const avatar = useProfileStore((s) => s.avatar);
@@ -54,12 +58,19 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.root}>
+      <LinearGradient
+        colors={[colors.brand.soft, colors.light.background]}
+        locations={[0, 0.35]}
+        style={styles.ambient}
+        pointerEvents="none"
+      />
+
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={[
           styles.content,
           {
-            paddingTop: insets.top + spacing.sm,
+            paddingTop: insets.top + spacing.md,
             paddingBottom: insets.bottom + 110,
           },
         ]}
@@ -82,7 +93,7 @@ export default function HomeScreen() {
 
         {momentsQuery.isLoading ? (
           <View style={styles.loading}>
-            <ActivityIndicator color={colors.brand.pink} />
+            <LoadingState label="Gathering your Moments…" style={styles.loadingInner} />
           </View>
         ) : null}
 
@@ -99,9 +110,14 @@ export default function HomeScreen() {
             entering={FadeInDown.delay(120).duration(motion.duration.normal).springify()}
             style={styles.section}
           >
-            <Text style={styles.sectionTitle}>
-              {featured.state === 'draft' ? 'Continue a Moment' : 'Spotlight'}
-            </Text>
+            <SectionLabel
+              title={featured.state === 'draft' ? 'Continue a Moment' : 'A Moment to revisit'}
+              subtitle={
+                featured.state === 'draft'
+                  ? 'Pick up where the feeling left off'
+                  : 'Already sent — open it again anytime'
+              }
+            />
             <ActiveMomentCard moment={featured} />
           </Animated.View>
         ) : null}
@@ -111,14 +127,12 @@ export default function HomeScreen() {
             entering={FadeInDown.delay(180).duration(motion.duration.normal).springify()}
             style={styles.section}
           >
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Recent moments</Text>
-              <Link href="/(app)/(tabs)/moments" asChild>
-                <Pressable hitSlop={8}>
-                  <Text style={styles.seeAll}>See all</Text>
-                </Pressable>
-              </Link>
-            </View>
+            <SectionLabel
+              title="Recent Moments"
+              subtitle="Drafts and sends, softly gathered"
+              actionLabel="See all"
+              onAction={() => router.push('/(app)/(tabs)/moments')}
+            />
             <View style={styles.list}>
               {recent.map((moment) => (
                 <RecentMomentCard key={moment.id} moment={moment} />
@@ -138,31 +152,30 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.light.background,
   },
+  ambient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 280,
+  },
   scroll: {
     flex: 1,
   },
   content: {
     paddingHorizontal: spacing.lg,
-    gap: spacing.lg,
+    gap: spacing.xl,
   },
   loading: {
-    paddingVertical: spacing.xl,
-    alignItems: 'center',
+    minHeight: 96,
+  },
+  loadingInner: {
+    flex: 0,
+    minHeight: 96,
+    backgroundColor: 'transparent',
   },
   section: {
-    gap: spacing.sm,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  sectionTitle: {
-    ...typography.subtitle,
-  },
-  seeAll: {
-    ...typography.label,
-    color: colors.brand.pinkDeep,
+    gap: spacing.md,
   },
   list: {
     gap: spacing.sm,

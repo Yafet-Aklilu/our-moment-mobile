@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { fontFamilies, spacing, touchMin } from '@/theme';
+import { fontFamilies, radii, spacing, touchMin } from '@/theme';
 import { resolveNativeMomentTheme } from '@/player/nativeTheme';
 import type { NativeSceneProps } from '@/player/resolveNativeScenes';
 
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
     minHeight: touchMin,
     paddingHorizontal: spacing.lg,
-    borderRadius: 999,
+    borderRadius: radii.button,
     borderWidth: 1.5,
   },
   restartLabel: {

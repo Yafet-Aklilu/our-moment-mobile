@@ -13,7 +13,7 @@ export function BuilderSaveStatus({ status, errorMessage, readOnly }: Props) {
   if (readOnly) {
     return (
       <View style={styles.wrap}>
-        <Text style={styles.muted}>This Moment is sent — editing is locked.</Text>
+        <Text style={styles.muted}>Sent — editing is locked.</Text>
       </View>
     );
   }
@@ -21,7 +21,7 @@ export function BuilderSaveStatus({ status, errorMessage, readOnly }: Props) {
   if (status === 'idle') {
     return (
       <View style={styles.wrap}>
-        <Text style={styles.muted}>Changes save when you leave a field.</Text>
+        <Text style={styles.muted}>Saves as you go.</Text>
       </View>
     );
   }
@@ -51,25 +51,27 @@ export function BuilderSaveStatus({ status, errorMessage, readOnly }: Props) {
 
 const styles = StyleSheet.create({
   wrap: {
-    minHeight: 20,
+    minHeight: 18,
     justifyContent: 'center',
   },
   muted: {
     ...typography.caption,
+    fontSize: 12,
     color: colors.light.textMuted,
   },
   saving: {
     ...typography.caption,
-    color: colors.brand.pinkDeep,
-    fontFamily: 'Manrope_600SemiBold',
+    fontSize: 12,
+    color: colors.light.textSecondary,
   },
   saved: {
     ...typography.caption,
-    color: colors.light.textSecondary,
-    fontFamily: 'Manrope_600SemiBold',
+    fontSize: 12,
+    color: colors.light.textMuted,
   },
   error: {
     ...typography.caption,
+    fontSize: 12,
     color: colors.light.danger,
   },
 });

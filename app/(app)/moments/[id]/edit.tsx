@@ -1,10 +1,9 @@
 import { useLocalSearchParams } from 'expo-router';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
 import { useMomentQuery } from '@/api/hooks/useMoments';
-import { Button } from '@/components/ui/Button';
+import { ErrorState } from '@/components/ui/ErrorState';
+import { LoadingState } from '@/components/ui/LoadingState';
 import { BuilderShell } from '@/features/builder/BuilderShell';
-import { colors, spacing, typography } from '@/theme';
 
 /**
  * Native Moment Builder entry — replaces the editor foundation placeholder.
@@ -16,58 +15,26 @@ export default function MomentEditScreen() {
   const query = useMomentQuery(momentId);
 
   if (!Number.isFinite(momentId) || momentId <= 0) {
-    return (
-      <View style={styles.centered}>
-        <Text style={styles.errorTitle}>Invalid Moment</Text>
-      </View>
-    );
+    return <ErrorState title="Invalid Moment" body="This link doesn’t point to a valid Moment." />;
   }
 
   if (query.isLoading && !query.data) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator color={colors.brand.pink} size="large" />
-      </View>
-    );
+    return <LoadingState label="Opening your Moment…" />;
   }
 
   if (query.isError && !query.data) {
     return (
-      <View style={styles.centered}>
-        <Text style={styles.errorTitle}>Couldn’t load this Moment</Text>
-        <Text style={styles.errorBody}>Check your connection and try again.</Text>
-        <Button label="Try again" variant="secondary" onPress={() => void query.refetch()} />
-      </View>
+      <ErrorState
+        title="Couldn’t load this Moment"
+        body="Check your connection and try again."
+        onAction={() => void query.refetch()}
+      />
     );
   }
 
   if (!query.data) {
-    return (
-      <View style={styles.centered}>
-        <Text style={styles.errorTitle}>Moment not found</Text>
-      </View>
-    );
+    return <ErrorState title="Moment not found" body="It may have been removed or the link is outdated." />;
   }
 
   return <BuilderShell moment={query.data} />;
 }
-
-const styles = StyleSheet.create({
-  centered: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: spacing.xl,
-    gap: spacing.sm,
-    backgroundColor: colors.light.background,
-  },
-  errorTitle: {
-    ...typography.titleSmall,
-    textAlign: 'center',
-  },
-  errorBody: {
-    ...typography.body,
-    color: colors.light.textSecondary,
-    textAlign: 'center',
-  },
-});

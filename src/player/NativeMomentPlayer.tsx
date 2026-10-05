@@ -144,7 +144,7 @@ export function NativeMomentPlayer({ config, onClose }: Props) {
         </Animated.View>
       </View>
 
-      {scenes.length > 1 ? (
+      {scenes.length > 1 && mergedScene.id !== 'preload' && mergedScene.id !== 'cta' ? (
         <View pointerEvents="none" style={[styles.progressRow, { top: insets.top + spacing.xs }]}>
           {scenes.map((s, i) => (
             <View

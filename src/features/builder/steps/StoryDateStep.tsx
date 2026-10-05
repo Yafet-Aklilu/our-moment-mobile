@@ -1,13 +1,14 @@
 import { useRef, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { useSaveMomentStepMutation } from '@/api/hooks/useMoments';
+import { PageIntro } from '@/components/ui/PageIntro';
+import { TextField } from '@/components/ui/TextField';
 import { BuilderSaveStatus } from '@/features/builder/BuilderSaveStatus';
 import { readContentValue } from '@/features/builder/contentHelpers';
 import { useAutosaveStatus } from '@/features/builder/useAutosaveStatus';
 import type { BuilderStep } from '@/features/builder/types';
-import { TextField } from '@/components/ui/TextField';
-import { colors, spacing, typography } from '@/theme';
+import { spacing } from '@/theme';
 import type { Moment } from '@/types/api';
 
 type Props = {
@@ -46,8 +47,11 @@ export function StoryDateStep({ moment, step }: Props) {
 
   return (
     <View style={styles.root}>
-      <Text style={styles.title}>{step.label}</Text>
-      {step.description ? <Text style={styles.sub}>{step.description}</Text> : null}
+      <PageIntro
+        title={step.label}
+        body={step.description || 'A date that matters.'}
+        style={styles.intro}
+      />
 
       <TextField
         label="Date"
@@ -69,14 +73,9 @@ export function StoryDateStep({ moment, step }: Props) {
 
 const styles = StyleSheet.create({
   root: {
-    gap: spacing.md,
+    gap: spacing.lg,
   },
-  title: {
-    ...typography.titleSmall,
-  },
-  sub: {
-    ...typography.body,
-    color: colors.light.textSecondary,
-    marginTop: -spacing.sm,
+  intro: {
+    marginBottom: 0,
   },
 });

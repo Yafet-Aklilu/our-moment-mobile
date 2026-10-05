@@ -9,7 +9,7 @@ type Chip = { key: MomentsFilter; label: string };
 
 const CHIPS: Chip[] = [
   { key: 'all', label: 'All' },
-  { key: 'draft', label: 'Still editing' },
+  { key: 'draft', label: 'Editing' },
   { key: 'activated', label: 'Sent' },
 ];
 
@@ -19,11 +19,11 @@ type Props = {
   totalLabel?: string;
 };
 
-/** Mirrors web Moments Index filters: All / Still editing / Sent. */
+/** Soft filter segments — useful, not SaaS chip clutter. */
 export function MomentsFilterBar({ value, onChange, totalLabel }: Props) {
   return (
     <View style={styles.wrap}>
-      <View style={styles.chips}>
+      <View style={styles.track}>
         {CHIPS.map((chip) => {
           const active = value === chip.key;
           return (
@@ -32,9 +32,9 @@ export function MomentsFilterBar({ value, onChange, totalLabel }: Props) {
               accessibilityRole="button"
               accessibilityState={{ selected: active }}
               onPress={() => onChange(chip.key)}
-              style={[styles.chip, active && styles.chipActive]}
+              style={[styles.segment, active && styles.segmentActive]}
             >
-              <Text style={[styles.chipText, active && styles.chipTextActive]}>
+              <Text style={[styles.segmentText, active && styles.segmentTextActive]}>
                 {chip.label}
               </Text>
             </Pressable>
@@ -50,34 +50,35 @@ const styles = StyleSheet.create({
   wrap: {
     gap: spacing.sm,
   },
-  chips: {
+  track: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.xs,
-  },
-  chip: {
-    minHeight: 36,
-    paddingHorizontal: 14,
+    backgroundColor: colors.light.surfaceMuted,
     borderRadius: radii.pill,
-    borderWidth: 1,
-    borderColor: colors.light.borderStrong,
-    backgroundColor: colors.light.surface,
+    padding: 4,
+    gap: 2,
+  },
+  segment: {
+    flex: 1,
+    minHeight: 40,
+    paddingHorizontal: spacing.sm,
+    borderRadius: radii.pill,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  chipActive: {
+  segmentActive: {
     backgroundColor: colors.brand.charcoal,
-    borderColor: colors.brand.charcoal,
   },
-  chipText: {
+  segmentText: {
     ...typography.label,
     fontSize: 13,
-    color: colors.light.textSecondary,
+    color: colors.light.textMuted,
   },
-  chipTextActive: {
-    color: '#fff',
+  segmentTextActive: {
+    color: '#FFFFFF',
   },
   count: {
     ...typography.caption,
+    color: '#6b5560',
+    textAlign: 'center',
   },
 });

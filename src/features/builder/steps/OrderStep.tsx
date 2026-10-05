@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useUpdateMomentSettingsMutation } from '@/api/hooks/useMoments';
+import { PageIntro } from '@/components/ui/PageIntro';
 import { BuilderSaveStatus } from '@/features/builder/BuilderSaveStatus';
 import { asSettings } from '@/features/builder/contentHelpers';
 import { PLAYBACK_SCENE_OPTIONS } from '@/features/builder/experienceOptions';
@@ -64,8 +65,11 @@ export function OrderStep({ moment }: Props) {
 
   return (
     <View style={styles.root}>
-      <Text style={styles.title}>Order</Text>
-      <Text style={styles.sub}>Change the order things play in.</Text>
+      <PageIntro
+        title="Order"
+        body="Change the order things play in."
+        style={styles.intro}
+      />
 
       <View style={styles.list}>
         {order.map((id, index) => {
@@ -108,32 +112,30 @@ export function OrderStep({ moment }: Props) {
 
 const styles = StyleSheet.create({
   root: {
-    gap: spacing.md,
+    gap: spacing.lg,
   },
-  title: {
-    ...typography.titleSmall,
-  },
-  sub: {
-    ...typography.body,
-    color: colors.light.textSecondary,
-    marginTop: -spacing.sm,
+  intro: {
+    marginBottom: 0,
   },
   list: {
-    gap: spacing.xs,
+    gap: spacing.sm,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
-    padding: spacing.sm,
-    borderRadius: radii.md,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: radii.lg,
     borderWidth: 1,
     borderColor: colors.light.border,
     backgroundColor: colors.light.surface,
   },
   rowIndex: {
     ...typography.caption,
-    color: colors.light.textMuted,
+    fontSize: 12,
+    color: colors.brand.pinkDeep,
+    fontFamily: 'Manrope_600SemiBold',
     width: 20,
   },
   rowLabel: {
@@ -143,6 +145,7 @@ const styles = StyleSheet.create({
   },
   pinnedLabel: {
     ...typography.caption,
+    fontSize: 12,
     color: colors.light.textMuted,
   },
   rowActions: {
@@ -150,9 +153,9 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   moveButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 34,
+    height: 34,
+    borderRadius: radii.md,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.light.surfaceMuted,

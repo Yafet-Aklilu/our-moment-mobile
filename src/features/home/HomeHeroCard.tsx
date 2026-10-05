@@ -12,137 +12,159 @@ type Props = {
 };
 
 /**
- * Primary action center — reference "dark hero card" structure,
- * OurMoment charcoal + soft text + pink→yellow create CTA.
+ * Primary Create surface — pink→yellow wash (web brand language),
+ * full-width Create CTA, quiet secondary path.
  */
 export function HomeHeroCard({ credits, hasDraft }: Props) {
   return (
-    <View style={[styles.card, shadows.soft]}>
-      <View style={styles.topRow}>
-        <View style={styles.creditsBlock}>
-          <Text style={styles.creditsLabel}>Moment credits</Text>
-          <Text style={styles.creditsValue}>
-            {credits == null ? '—' : credits}
-          </Text>
-        </View>
-        <View style={styles.spark}>
-          <Ionicons name="sparkles" size={18} color={colors.brand.yellow} />
-        </View>
-      </View>
+    <View style={[styles.wrap, shadows.soft]}>
+      <LinearGradient
+        colors={[colors.brand.pink, '#FF8A4C', colors.brand.yellow]}
+        locations={[0, 0.5, 1]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.gradient}
+      >
+        <View style={styles.orb} />
+        <Text style={styles.kicker}>Your next Moment</Text>
+        <Text style={styles.headline}>Make something they’ll remember</Text>
+        <Text style={styles.blurb}>
+          Create for free. Pay only when you’re ready to send.
+        </Text>
 
-      <Text style={styles.blurb}>
-        Create for free. Pay only when you’re ready to send.
-      </Text>
-
-      <View style={styles.actions}>
         <Link href="/(app)/(tabs)/create" asChild>
           <PressableScale style={styles.primaryAction}>
-            <LinearGradient
-              colors={[colors.brand.pink, colors.brand.yellow]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.primaryGradient}
-            >
-              <Ionicons name="add-circle" size={20} color="#fff" />
-              <Text style={styles.primaryLabel}>Create a moment</Text>
-            </LinearGradient>
+            <View style={styles.primaryInner}>
+              <Ionicons name="sparkles" size={18} color={colors.brand.pinkDeep} />
+              <Text style={styles.primaryLabel}>Create a Moment</Text>
+            </View>
           </PressableScale>
         </Link>
 
-        <Link href={hasDraft ? '/(app)/(tabs)/moments' : '/(app)/scan'} asChild>
-          <PressableScale style={styles.secondaryAction}>
-            <Ionicons
-              name={hasDraft ? 'heart-outline' : 'qr-code-outline'}
-              size={18}
-              color={colors.brand.soft}
-            />
-            <Text style={styles.secondaryLabel}>
-              {hasDraft ? 'My moments' : 'Scan a Moment'}
-            </Text>
-          </PressableScale>
-        </Link>
-      </View>
+        <View style={styles.footerRow}>
+          <View style={styles.creditsPill}>
+            <Text style={styles.creditsLabel}>Credits</Text>
+            <Text style={styles.creditsValue}>{credits == null ? '—' : credits}</Text>
+          </View>
+
+          <Link href={hasDraft ? '/(app)/(tabs)/moments' : '/(app)/scan'} asChild>
+            <PressableScale style={styles.secondaryAction}>
+              <Ionicons
+                name={hasDraft ? 'heart-outline' : 'qr-code-outline'}
+                size={16}
+                color="#FFFFFF"
+              />
+              <Text style={styles.secondaryLabel}>
+                {hasDraft ? 'My Moments' : 'Scan'}
+              </Text>
+            </PressableScale>
+          </Link>
+        </View>
+      </LinearGradient>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.brand.charcoal,
-    borderRadius: radii.xl,
-    padding: spacing.lg,
-    gap: spacing.md,
+  wrap: {
+    borderRadius: radii.xxl,
+    overflow: 'hidden',
   },
-  topRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
+  gradient: {
+    padding: spacing.xl,
+    gap: spacing.sm,
+    minHeight: 220,
+    justifyContent: 'flex-end',
   },
-  creditsBlock: {
-    gap: 2,
+  orb: {
+    position: 'absolute',
+    top: -40,
+    right: -30,
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    backgroundColor: 'rgba(255,255,255,0.16)',
   },
-  creditsLabel: {
+  kicker: {
     ...typography.caption,
-    color: 'rgba(255,245,240,0.62)',
+    color: 'rgba(255,255,255,0.88)',
+    fontFamily: 'Manrope_700Bold',
+    letterSpacing: 1,
     textTransform: 'uppercase',
-    letterSpacing: 0.7,
+    fontSize: 11,
   },
-  creditsValue: {
+  headline: {
     ...typography.display,
-    color: colors.brand.soft,
-  },
-  spark: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255,188,58,0.16)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    fontSize: 26,
+    lineHeight: 32,
+    letterSpacing: -0.4,
+    color: '#FFFFFF',
+    maxWidth: 280,
   },
   blurb: {
     ...typography.body,
-    color: 'rgba(255,245,240,0.72)',
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  actions: {
-    flexDirection: 'row',
-    gap: spacing.sm,
+    color: 'rgba(255,255,255,0.88)',
+    fontSize: 15,
+    lineHeight: 21,
+    marginBottom: spacing.sm,
   },
   primaryAction: {
-    flex: 1.2,
-    borderRadius: radii.md,
+    borderRadius: radii.button,
     overflow: 'hidden',
+    marginTop: spacing.xs,
   },
-  primaryGradient: {
-    minHeight: 52,
+  primaryInner: {
+    minHeight: 54,
+    backgroundColor: '#FFFFFF',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    paddingHorizontal: spacing.sm,
+    paddingHorizontal: spacing.lg,
   },
   primaryLabel: {
     ...typography.button,
-    color: '#fff',
-    fontSize: 14,
+    color: '#2a1f24',
   },
-  secondaryAction: {
-    flex: 1,
-    minHeight: 52,
-    borderRadius: radii.md,
-    borderWidth: 1,
-    borderColor: 'rgba(255,245,240,0.22)',
-    backgroundColor: 'rgba(255,255,255,0.06)',
+  footerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    marginTop: spacing.sm,
+    gap: spacing.sm,
+  },
+  creditsPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs + 2,
+    borderRadius: radii.pill,
+  },
+  creditsLabel: {
+    ...typography.caption,
+    color: 'rgba(255,255,255,0.8)',
+    fontSize: 12,
+  },
+  creditsValue: {
+    ...typography.label,
+    color: '#FFFFFF',
+    fontSize: 15,
+  },
+  secondaryAction: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 6,
-    paddingHorizontal: spacing.sm,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs + 2,
+    borderRadius: radii.pill,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.35)',
   },
   secondaryLabel: {
-    ...typography.button,
-    color: colors.brand.soft,
+    ...typography.label,
+    color: '#FFFFFF',
     fontSize: 13,
   },
 });

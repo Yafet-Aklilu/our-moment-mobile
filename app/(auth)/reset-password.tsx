@@ -1,18 +1,18 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { useResetPasswordMutation } from '@/api/hooks/useAuth';
 import { ApiClientError } from '@/api/client';
 import { Button } from '@/components/ui/Button';
+import { StatusBanner } from '@/components/ui/StatusBanner';
 import { TextField } from '@/components/ui/TextField';
 import { AuthScreen, AuthSwitchLink } from '@/features/auth/AuthScreen';
-import { colors, typography } from '@/theme';
+import { spacing } from '@/theme';
 
 /**
- * Deep-link target for password reset emails.
- * Query: ?token=...&email=...
- * Successful reset revokes all mobile PATs on the backend.
+ * Runtime: app/(auth)/reset-password → AuthScreen
+ * Deep-link: ?token=...&email=...
  */
 export default function ResetPasswordScreen() {
   const router = useRouter();
@@ -51,8 +51,8 @@ export default function ResetPasswordScreen() {
 
   return (
     <AuthScreen
-      title="Reset password"
-      subtitle="Choose a new password for your OurMoment account."
+      title="Choose a new password"
+      subtitle="Almost there — pick something secure, then you’re back to your Moments."
       footer={
         <AuthSwitchLink
           prompt="All set?"
@@ -85,18 +85,21 @@ export default function ResetPasswordScreen() {
         value={passwordConfirmation}
         onChangeText={setPasswordConfirmation}
       />
-      {message ? <Text style={styles.ok}>{message}</Text> : null}
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-      <Button
-        label="Update password"
-        onPress={() => void onSubmit()}
-        loading={reset.isPending}
-      />
+      {message ? <StatusBanner message={message} tone="success" /> : null}
+      {error ? <StatusBanner message={error} tone="error" /> : null}
+      <View style={styles.cta}>
+        <Button
+          label="Update password"
+          onPress={() => void onSubmit()}
+          loading={reset.isPending}
+        />
+      </View>
     </AuthScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  ok: { ...typography.caption, color: colors.light.success },
-  error: { ...typography.caption, color: colors.light.danger },
+  cta: {
+    marginTop: spacing.sm,
+  },
 });

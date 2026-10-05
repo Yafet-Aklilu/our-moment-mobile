@@ -12,7 +12,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ApiClientError } from '@/api/client';
 import { momentsApi } from '@/api/resources/moments';
 import { useTemplatesQuery } from '@/api/hooks/useMoments';
-import { Button } from '@/components/ui/Button';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { ErrorState } from '@/components/ui/ErrorState';
+import { LoadingState } from '@/components/ui/LoadingState';
+import { PageIntro } from '@/components/ui/PageIntro';
+import { StatusBanner } from '@/components/ui/StatusBanner';
 import { TemplateGridCard } from '@/features/create/TemplateGridCard';
 import { colors, spacing, typography } from '@/theme';
 import type { TemplateSummary } from '@/types/api';
@@ -47,33 +51,25 @@ export default function CreateScreen() {
   };
 
   if (templates.isLoading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator color={colors.brand.pink} size="large" />
-      </View>
-    );
+    return <LoadingState label="Finding styles for you…" />;
   }
 
   if (templates.isError) {
     return (
-      <View style={styles.centered}>
-        <Text style={styles.errorTitle}>Couldn’t load styles</Text>
-        <Text style={styles.errorBody}>
-          Check your connection to the OurMoment API and try again.
-        </Text>
-        <Button
-          label="Try again"
-          variant="secondary"
-          onPress={() => void templates.refetch()}
-        />
-      </View>
+      <ErrorState
+        title="Couldn’t load styles"
+        body="Check your connection and try again."
+        onAction={() => void templates.refetch()}
+      />
     );
   }
+
+  const items = templates.data ?? [];
 
   return (
     <View style={styles.root}>
       <FlatList
-        data={templates.data ?? []}
+        data={items}
         keyExtractor={(item) => String(item.id)}
         numColumns={2}
         columnWrapperStyle={styles.row}
@@ -81,17 +77,24 @@ export default function CreateScreen() {
           paddingHorizontal: spacing.lg,
           paddingTop: spacing.sm,
           paddingBottom: insets.bottom + 110,
+          flexGrow: 1,
         }}
         ListHeaderComponent={
           <View style={styles.header}>
-            <Text style={styles.intro}>
-              Choose who it’s for. Free to make — you pay only when you send.
-            </Text>
-            {error ? <Text style={styles.inlineError}>{error}</Text> : null}
+            <PageIntro
+              eyebrow="Create"
+              body="Choose who it’s for. Free to make — you pay only when you send."
+              style={styles.intro}
+            />
+            {error ? <StatusBanner message={error} tone="error" /> : null}
           </View>
         }
         ListEmptyComponent={
-          <Text style={styles.empty}>No styles available right now.</Text>
+          <EmptyState
+            icon="color-palette-outline"
+            title="No styles right now"
+            body="Styles will show up here when they’re available. Pull to refresh, or try again shortly."
+          />
         }
         renderItem={({ item, index }) => (
           <TemplateGridCard
@@ -106,8 +109,11 @@ export default function CreateScreen() {
 
       {startingId != null ? (
         <View style={styles.startingOverlay} pointerEvents="none">
-          <ActivityIndicator color={colors.brand.pink} />
-          <Text style={styles.startingText}>Starting your Moment…</Text>
+          <View style={styles.startingCard}>
+            <ActivityIndicator color={colors.brand.pink} size="large" />
+            <Text style={styles.startingText}>Starting your Moment…</Text>
+            <Text style={styles.startingHint}>This only takes a moment.</Text>
+          </View>
         </View>
       ) : null}
     </View>
@@ -119,55 +125,41 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.light.background,
   },
-  centered: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: spacing.xl,
-    gap: spacing.sm,
-    backgroundColor: colors.light.background,
-  },
   header: {
-    marginBottom: spacing.md,
+    marginBottom: spacing.lg,
     gap: spacing.sm,
   },
   intro: {
-    ...typography.body,
-    color: colors.light.textSecondary,
-  },
-  inlineError: {
-    ...typography.caption,
-    color: colors.light.danger,
+    marginBottom: 0,
   },
   row: {
     gap: spacing.sm,
-    marginBottom: spacing.sm,
-  },
-  empty: {
-    ...typography.body,
-    color: colors.light.textSecondary,
-    textAlign: 'center',
-    marginTop: spacing.xxl,
-  },
-  errorTitle: {
-    ...typography.titleSmall,
-    textAlign: 'center',
-  },
-  errorBody: {
-    ...typography.body,
-    color: colors.light.textSecondary,
-    textAlign: 'center',
     marginBottom: spacing.sm,
   },
   startingOverlay: {
     ...StyleSheet.absoluteFill,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(250,247,242,0.72)',
+    backgroundColor: 'rgba(250,247,242,0.82)',
+    paddingHorizontal: spacing.xl,
+  },
+  startingCard: {
+    alignItems: 'center',
     gap: spacing.sm,
+    backgroundColor: colors.light.surface,
+    borderRadius: 24,
+    paddingVertical: spacing.xl,
+    paddingHorizontal: spacing.xl,
+    borderWidth: 1,
+    borderColor: colors.light.border,
+    minWidth: 220,
   },
   startingText: {
-    ...typography.label,
-    color: colors.light.textSecondary,
+    ...typography.subtitle,
+    textAlign: 'center',
+  },
+  startingHint: {
+    ...typography.caption,
+    textAlign: 'center',
   },
 });

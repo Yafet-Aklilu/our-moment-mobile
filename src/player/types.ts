@@ -30,8 +30,12 @@ export type MomentPlayerProps = {
 };
 
 /**
- * Feature flag — set true when native scene player ships.
- * Until then, boundary still loads public config + WebView fallback.
+ * Feature flag for the *public/recipient* player behind MomentPlayerBoundary.
+ * Owner Preview already uses NativeMomentPlayer directly.
+ *
+ * Keep false until remote lock verify + audio + reaction CTAs match web.
+ * When true, Boundary prefers NativeMomentPlayer and falls back to WebView
+ * if the public config is empty.
  */
 export const NATIVE_PLAYER_READY = false;
 

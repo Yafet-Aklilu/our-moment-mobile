@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { MomentPlayerBoundary } from '@/player/MomentPlayerBoundary';
@@ -12,6 +12,7 @@ import { colors, typography } from '@/theme';
  */
 export default function UniversalMomentScreen() {
   const { publicToken } = useLocalSearchParams<{ publicToken: string }>();
+  const router = useRouter();
   const token = typeof publicToken === 'string' ? publicToken : '';
 
   if (!isValidPublicToken(token)) {
@@ -22,7 +23,14 @@ export default function UniversalMomentScreen() {
     );
   }
 
-  return <MomentPlayerBoundary publicToken={token} />;
+  return (
+    <MomentPlayerBoundary
+      publicToken={token}
+      onClose={() => {
+        if (router.canGoBack()) router.back();
+      }}
+    />
+  );
 }
 
 const styles = StyleSheet.create({

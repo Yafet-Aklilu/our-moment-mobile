@@ -1,12 +1,10 @@
 /**
- * Unsplash imagery for first-run onboarding.
- * Remote URLs only — not committed binary assets.
- * Sized for mobile via images.unsplash.com query params.
- *
- * Replace later by editing this file.
+ * First-run onboarding slides.
+ * Remote Unsplash imagery — not committed binary assets.
  */
 export type OnboardingSlide = {
   id: string;
+  eyebrow: string;
   title: string;
   body: string;
   imageUrl: string;
@@ -17,9 +15,9 @@ export type OnboardingSlide = {
 export const ONBOARDING_SLIDES: OnboardingSlide[] = [
   {
     id: 'create',
+    eyebrow: 'Create',
     title: 'Make something they’ll remember.',
-    body: 'Create a personalized Moment with your words, photos, music, and little surprises.',
-    // Warm couple / intimate connection at golden hour
+    body: 'Build a personalized Moment with your words, photos, music, and little surprises — free to start.',
     imageUrl:
       'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=1200&q=80',
     imageCredit: 'Photo by Everton Vila on Unsplash',
@@ -27,9 +25,9 @@ export const ONBOARDING_SLIDES: OnboardingSlide[] = [
   },
   {
     id: 'personalize',
+    eyebrow: 'Personalize',
     title: 'Turn a feeling into a Moment.',
-    body: 'Choose a style, add your memories, and shape every little detail.',
-    // Hands holding polaroid-style memory / photos
+    body: 'Pick a style, add your memories, and shape every detail until it feels unmistakably like you.',
     imageUrl:
       'https://images.unsplash.com/photo-1452587925148-ce544e77fc43?auto=format&fit=crop&w=1200&q=80',
     imageCredit: 'Photo by James Sutton on Unsplash',
@@ -37,9 +35,9 @@ export const ONBOARDING_SLIDES: OnboardingSlide[] = [
   },
   {
     id: 'share',
+    eyebrow: 'Share',
     title: 'Then send them a little magic.',
-    body: 'Share your Moment privately with a link or QR — and let them experience it for themselves.',
-    // Soft gift with warm lights — anticipation / receiving
+    body: 'Share privately with a link or QR — no app for them to install. Just open, and feel it.',
     imageUrl:
       'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=1200&q=80',
     imageCredit: 'Photo by freestocks on Unsplash',

@@ -40,8 +40,7 @@ export function AvatarPickerSheet({
           <View style={styles.handle} />
           <Text style={styles.title}>Choose a look</Text>
           <Text style={styles.sub}>
-            Illustrations and photos stay on this device until profile photos are
-            supported by the OurMoment API.
+            Illustrations and photos stay on this device for now.
           </Text>
 
           <Pressable style={styles.actionRow} onPress={onPickPhoto}>
@@ -100,7 +99,7 @@ const styles = StyleSheet.create({
   },
   backdrop: {
     ...StyleSheet.absoluteFill,
-    backgroundColor: 'rgba(28,24,20,0.4)',
+    backgroundColor: 'rgba(28,24,20,0.35)',
   },
   sheet: {
     backgroundColor: colors.light.background,
@@ -130,7 +129,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.sm,
     backgroundColor: colors.light.surface,
-    borderRadius: radii.lg,
+    borderRadius: radii.xl,
     borderWidth: 1,
     borderColor: colors.light.border,
     padding: spacing.md,
@@ -138,8 +137,8 @@ const styles = StyleSheet.create({
   actionIcon: {
     width: 40,
     height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.light.surfaceMuted,
+    borderRadius: radii.md,
+    backgroundColor: colors.brand.pinkSoft,
     alignItems: 'center',
     justifyContent: 'center',
   },

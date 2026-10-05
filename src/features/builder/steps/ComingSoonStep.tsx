@@ -11,17 +11,16 @@ type Props = {
 export function ComingSoonStep({ step }: Props) {
   return (
     <View style={styles.root}>
-      <Text style={styles.kicker}>Coming next</Text>
+      <Text style={styles.kicker}>Coming soon</Text>
       <Text style={styles.title}>{step.label}</Text>
-      <Text style={styles.body}>{step.description}</Text>
+      {step.description ? <Text style={styles.body}>{step.description}</Text> : null}
       <View style={styles.note}>
         <Text style={styles.noteText}>
-          This section will use the same /api/v1/moments contracts as the web
-          builder. Details (names) is live in this pass.
+          This part is coming soon. You can keep editing the rest of your Moment — we’ll fill this in next.
         </Text>
       </View>
       {step.required ? (
-        <Text style={styles.required}>Required before activate</Text>
+        <Text style={styles.required}>Needed before you activate</Text>
       ) : (
         <Text style={styles.optional}>Optional</Text>
       )}
@@ -35,8 +34,8 @@ const styles = StyleSheet.create({
   },
   kicker: {
     ...typography.caption,
-    textTransform: 'uppercase',
-    letterSpacing: 0.7,
+    fontSize: 12,
+    letterSpacing: 0.4,
     color: colors.brand.pinkDeep,
     fontFamily: 'Manrope_600SemiBold',
   },
@@ -49,24 +48,25 @@ const styles = StyleSheet.create({
   },
   note: {
     marginTop: spacing.sm,
-    padding: spacing.md,
-    borderRadius: radii.lg,
+    padding: spacing.lg,
+    borderRadius: radii.xl,
     backgroundColor: colors.light.surfaceMuted,
-    borderWidth: 1,
-    borderColor: colors.light.border,
   },
   noteText: {
-    ...typography.caption,
+    ...typography.body,
+    fontSize: 15,
+    lineHeight: 22,
     color: colors.light.textSecondary,
-    lineHeight: 18,
   },
   required: {
-    ...typography.label,
+    ...typography.caption,
     color: colors.brand.pinkDeep,
+    fontFamily: 'Manrope_500Medium',
     marginTop: spacing.xs,
   },
   optional: {
     ...typography.caption,
+    fontSize: 12,
     marginTop: spacing.xs,
   },
 });

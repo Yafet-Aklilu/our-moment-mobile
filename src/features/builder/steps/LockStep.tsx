@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { useUpdateMomentSettingsMutation } from '@/api/hooks/useMoments';
+import { PageIntro } from '@/components/ui/PageIntro';
 import { BuilderSaveStatus } from '@/features/builder/BuilderSaveStatus';
 import { asSettings } from '@/features/builder/contentHelpers';
 import { LOCK_TYPES } from '@/features/builder/experienceOptions';
@@ -164,8 +165,11 @@ export function LockStep({ moment }: Props) {
 
   return (
     <View style={styles.root}>
-      <Text style={styles.title}>Lock</Text>
-      <Text style={styles.sub}>A passcode, a pattern, or a question only they know.</Text>
+      <PageIntro
+        title="Lock"
+        body="A passcode, a pattern, or a question only they know."
+        style={styles.intro}
+      />
 
       <ToggleRow label="Enable lock" value={state.enabled} onChange={onToggle} disabled={readOnly} />
 
@@ -326,29 +330,23 @@ export function LockStep({ moment }: Props) {
 
 const styles = StyleSheet.create({
   root: {
-    gap: spacing.md,
+    gap: spacing.lg,
   },
-  title: {
-    ...typography.titleSmall,
-  },
-  sub: {
-    ...typography.body,
-    color: colors.light.textSecondary,
-    marginTop: -spacing.sm,
+  intro: {
+    marginBottom: 0,
   },
   section: {
-    gap: spacing.sm,
+    gap: spacing.md,
   },
   label: {
     ...typography.label,
     color: colors.light.text,
-    marginTop: spacing.xs,
   },
   textInput: {
     ...typography.body,
     borderWidth: 1.5,
-    borderColor: colors.light.borderStrong,
-    borderRadius: radii.md,
+    borderColor: colors.light.border,
+    borderRadius: radii.lg,
     backgroundColor: colors.light.surface,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
@@ -376,9 +374,9 @@ const styles = StyleSheet.create({
   patternCell: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: radii.md,
     borderWidth: 1.5,
-    borderColor: colors.light.borderStrong,
+    borderColor: colors.light.border,
     backgroundColor: colors.light.surface,
     alignItems: 'center',
     justifyContent: 'center',
@@ -416,8 +414,8 @@ const styles = StyleSheet.create({
     ...typography.body,
     flex: 1,
     borderWidth: 1.5,
-    borderColor: colors.light.borderStrong,
-    borderRadius: radii.md,
+    borderColor: colors.light.border,
+    borderRadius: radii.lg,
     backgroundColor: colors.light.surface,
     paddingHorizontal: spacing.md,
     paddingVertical: 10,
@@ -437,6 +435,7 @@ const styles = StyleSheet.create({
   },
   hint: {
     ...typography.caption,
+    fontSize: 12,
     color: colors.light.textMuted,
   },
   gateHint: {

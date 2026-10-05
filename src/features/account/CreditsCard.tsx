@@ -13,7 +13,7 @@ export function CreditsCard({ credits, freePublish }: Props) {
   return (
     <Animated.View entering={FadeInDown.delay(80).duration(motion.duration.normal).springify()}>
       <LinearGradient
-        colors={[colors.brand.charcoal, '#2E2420']}
+        colors={[colors.brand.charcoal, colors.brand.charcoalLift]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={[styles.card, shadows.soft]}
@@ -58,10 +58,10 @@ const styles = StyleSheet.create({
   badge: {
     alignSelf: 'flex-start',
     marginTop: spacing.sm,
-    borderRadius: radii.pill,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    backgroundColor: 'rgba(255,188,58,0.22)',
+    borderRadius: radii.button,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: colors.brand.yellowSoft,
   },
   badgeText: {
     ...typography.label,

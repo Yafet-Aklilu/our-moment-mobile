@@ -34,6 +34,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   android: {
     package: 'app.ourmoment.mobile',
     // Required for http://LAN-IP:8000 during local API development.
+    // ExpoConfig typings lag behind the Android manifest field Expo still applies.
+    // @ts-expect-error usesCleartextTraffic is supported by Expo prebuild
     usesCleartextTraffic: true,
     adaptiveIcon: {
       backgroundColor: '#FFF5F0',

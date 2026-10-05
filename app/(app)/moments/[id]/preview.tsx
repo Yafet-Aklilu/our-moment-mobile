@@ -1,15 +1,17 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect } from 'react';
-import { ActivityIndicator, BackHandler, Pressable, StyleSheet, Text, View } from 'react-native';
+import { BackHandler, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useQuery } from '@tanstack/react-query';
 
 import { momentsApi } from '@/api/resources/moments';
-import { Button } from '@/components/ui/Button';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { ErrorState } from '@/components/ui/ErrorState';
+import { LoadingState } from '@/components/ui/LoadingState';
 import { NativeMomentPlayer } from '@/player/NativeMomentPlayer';
 import { asMomentConfig, isMomentConfigEmpty } from '@/player/momentConfig';
-import { colors, radii, spacing, typography } from '@/theme';
+import { colors, spacing } from '@/theme';
 
 /**
  * Owner Preview — renders the native Moment Player against
@@ -38,20 +40,20 @@ export default function MomentPreviewScreen() {
   }, []);
 
   if (preview.isLoading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator color={colors.brand.pink} size="large" />
-      </View>
-    );
+    return <LoadingState label="Preparing your preview…" />;
   }
 
   if (preview.isError || !preview.data) {
     return (
-      <View style={[styles.centered, styles.padded]}>
+      <View style={styles.chrome}>
         <BackButton onPress={handleClose} insetsTop={insets.top} />
-        <Text style={styles.title}>Preview unavailable</Text>
-        <Text style={styles.body}>We couldn’t load this moment’s preview. Try again shortly.</Text>
-        <Button label="Close" variant="secondary" onPress={handleClose} />
+        <ErrorState
+          title="Preview unavailable"
+          body="We couldn’t load this moment’s preview. Try again shortly."
+          actionLabel="Close"
+          onAction={handleClose}
+          style={styles.chromeState}
+        />
       </View>
     );
   }
@@ -59,36 +61,40 @@ export default function MomentPreviewScreen() {
   const config = asMomentConfig(preview.data.config);
 
   if (!config || isMomentConfigEmpty(config)) {
+    const missing = preview.data.missing_steps ?? [];
+    const missingBody =
+      missing.length > 0
+        ? `Still needed: ${missing.map(missingStepLabel).join(', ')}.`
+        : 'Add a message, photo, or the other moment details first — your preview will come alive once there’s something to show.';
+
     return (
-      <View style={[styles.centered, styles.padded]}>
+      <View style={styles.chrome}>
         <BackButton onPress={handleClose} insetsTop={insets.top} />
-        <View style={styles.badge}>
-          <Text style={styles.badgeLabel}>Preview</Text>
-        </View>
-        <Text style={styles.title}>Nothing to preview yet</Text>
-        <Text style={styles.body}>
-          Add a message, photo, or the other moment details first — your preview will come alive once
-          there’s something to show.
-        </Text>
-        {preview.data.missing_steps?.length ? (
-          <View style={styles.missingCard}>
-            <Text style={styles.missingTitle}>Still needed</Text>
-            {preview.data.missing_steps.map((step) => (
-              <Text key={step} style={styles.missingItem}>
-                • {step}
-              </Text>
-            ))}
-          </View>
-        ) : null}
-        <View style={styles.actions}>
-          <Button label="Continue editing" onPress={() => router.replace(`/(app)/moments/${momentId}/edit`)} />
-          <Button label="Close" variant="secondary" onPress={handleClose} />
-        </View>
+        <EmptyState
+          eyebrow="Preview"
+          icon="eye-outline"
+          title="Nothing to preview yet"
+          body={missingBody}
+          actionLabel="Continue editing"
+          onAction={() => router.replace(`/(app)/moments/${momentId}/edit`)}
+          secondaryLabel="Close"
+          onSecondary={handleClose}
+          style={styles.chromeState}
+        />
       </View>
     );
   }
 
   return <NativeMomentPlayer config={config} onClose={handleClose} />;
+}
+
+function missingStepLabel(step: unknown): string {
+  if (step && typeof step === 'object') {
+    const obj = step as { label?: unknown; id?: unknown };
+    if (typeof obj.label === 'string' && obj.label) return obj.label;
+    if (typeof obj.id === 'string' && obj.id) return obj.id;
+  }
+  return String(step);
 }
 
 function BackButton({ onPress, insetsTop }: { onPress: () => void; insetsTop: number }) {
@@ -105,70 +111,22 @@ function BackButton({ onPress, insetsTop }: { onPress: () => void; insetsTop: nu
 }
 
 const styles = StyleSheet.create({
-  centered: {
+  chrome: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor: colors.light.background,
   },
-  padded: {
-    paddingHorizontal: spacing.xl,
-    gap: spacing.sm,
+  chromeState: {
+    flex: 1,
   },
   backButton: {
     position: 'absolute',
     left: spacing.lg,
+    zIndex: 2,
     width: 36,
     height: 36,
     borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.light.surfaceMuted,
-  },
-  badge: {
-    backgroundColor: colors.light.surfaceMuted,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 4,
-    borderRadius: radii.pill,
-    marginBottom: spacing.sm,
-  },
-  badgeLabel: {
-    ...typography.caption,
-    color: colors.brand.pinkDeep,
-    fontFamily: 'Manrope_600SemiBold',
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-    fontSize: 11,
-  },
-  title: { ...typography.title, textAlign: 'center' },
-  body: {
-    ...typography.body,
-    color: colors.light.textSecondary,
-    textAlign: 'center',
-    maxWidth: 320,
-  },
-  missingCard: {
-    width: '100%',
-    maxWidth: 340,
-    backgroundColor: colors.light.surfaceMuted,
-    borderRadius: radii.lg,
-    padding: spacing.md,
-    gap: 2,
-    marginTop: spacing.sm,
-  },
-  missingTitle: {
-    ...typography.label,
-    color: colors.light.text,
-    marginBottom: spacing.xxs,
-  },
-  missingItem: {
-    ...typography.caption,
-    color: colors.light.textSecondary,
-  },
-  actions: {
-    width: '100%',
-    maxWidth: 320,
-    gap: spacing.sm,
-    marginTop: spacing.md,
   },
 });

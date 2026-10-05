@@ -1,10 +1,12 @@
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
+import { BrandMark } from '@/components/ui/BrandMark';
 import { Button } from '@/components/ui/Button';
 import { parseMomentPublicToken } from '@/linking/momentUrl';
 import { colors, radii, spacing, typography } from '@/theme';
@@ -45,12 +47,13 @@ export default function ScanScreen() {
   if (!permission.granted) {
     return (
       <View style={styles.centered}>
+        <BrandMark size="lg" showWordmark />
         <Text style={styles.title}>Camera access</Text>
         <Text style={styles.body}>
-          Allow camera access to scan an OurMoment QR code.
+          Allow camera access to scan an OurMoment QR code and open a shared Moment.
         </Text>
-        <Button label="Allow camera" onPress={() => void requestPermission()} />
-        <Button label="Go back" variant="secondary" onPress={() => router.back()} />
+        <Button label="Allow camera" onPress={() => void requestPermission()} style={styles.permBtn} />
+        <Button label="Go back" variant="secondary" onPress={() => router.back()} style={styles.permBtn} />
       </View>
     );
   }
@@ -95,6 +98,12 @@ export default function ScanScreen() {
           { bottom: Math.max(insets.bottom, spacing.md) + spacing.lg },
         ]}
       >
+        <LinearGradient
+          colors={['rgba(255,108,113,0.22)', 'rgba(255,188,58,0.18)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={StyleSheet.absoluteFill}
+        />
         <Text style={styles.overlayTitle}>Scan a Moment</Text>
         <Text style={styles.overlayBody}>
           Center the QR in the box. Looks like ourmoment.app/m/…
@@ -114,15 +123,20 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: spacing.lg,
+    padding: spacing.xl,
     gap: spacing.md,
     backgroundColor: colors.light.background,
   },
-  title: { ...typography.title },
+  title: { ...typography.title, textAlign: 'center' },
   body: {
     ...typography.body,
     color: colors.light.textSecondary,
     textAlign: 'center',
+    maxWidth: 320,
+  },
+  permBtn: {
+    alignSelf: 'stretch',
+    maxWidth: 320,
   },
   guide: {
     ...StyleSheet.absoluteFill,
@@ -147,13 +161,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: CORNER,
     height: CORNER,
-    borderColor: colors.brand.soft,
   },
   tl: {
     top: 0,
     left: 0,
     borderTopWidth: THICK,
     borderLeftWidth: THICK,
+    borderColor: colors.brand.pink,
     borderTopLeftRadius: 12,
   },
   tr: {
@@ -161,6 +175,7 @@ const styles = StyleSheet.create({
     right: 0,
     borderTopWidth: THICK,
     borderRightWidth: THICK,
+    borderColor: colors.brand.yellow,
     borderTopRightRadius: 12,
   },
   bl: {
@@ -168,6 +183,7 @@ const styles = StyleSheet.create({
     left: 0,
     borderBottomWidth: THICK,
     borderLeftWidth: THICK,
+    borderColor: colors.brand.pink,
     borderBottomLeftRadius: 12,
   },
   br: {
@@ -175,6 +191,7 @@ const styles = StyleSheet.create({
     right: 0,
     borderBottomWidth: THICK,
     borderRightWidth: THICK,
+    borderColor: colors.brand.yellow,
     borderBottomRightRadius: 12,
   },
   close: {
@@ -192,9 +209,10 @@ const styles = StyleSheet.create({
     left: spacing.lg,
     right: spacing.lg,
     padding: spacing.md,
-    borderRadius: 20,
+    borderRadius: radii.xl,
     backgroundColor: 'rgba(28,24,20,0.78)',
     gap: spacing.xs,
+    overflow: 'hidden',
   },
   overlayTitle: { ...typography.titleSmall, color: '#fff' },
   overlayBody: { ...typography.body, color: 'rgba(255,245,240,0.85)' },

@@ -9,6 +9,7 @@ import {
   useUpdateMomentSettingsMutation,
   useUploadMomentMediaMutation,
 } from '@/api/hooks/useMoments';
+import { PageIntro } from '@/components/ui/PageIntro';
 import { BuilderSaveStatus } from '@/features/builder/BuilderSaveStatus';
 import { asSettings, findAudioStepId } from '@/features/builder/contentHelpers';
 import { EXPERIENCE_SOUND_STEP_ID } from '@/features/builder/experienceOptions';
@@ -120,8 +121,11 @@ export function MusicStep({ moment }: Props) {
 
   return (
     <View style={styles.root}>
-      <Text style={styles.title}>Music</Text>
-      <Text style={styles.sub}>Add a song — yours, or a YouTube link.</Text>
+      <PageIntro
+        title="Music"
+        body="Add a song — yours, or a YouTube link."
+        style={styles.intro}
+      />
 
       {soundType === 'catalog' ? (
         <View style={styles.noteCard}>
@@ -198,25 +202,18 @@ export function MusicStep({ moment }: Props) {
 
 const styles = StyleSheet.create({
   root: {
-    gap: spacing.md,
+    gap: spacing.lg,
   },
-  title: {
-    ...typography.titleSmall,
-  },
-  sub: {
-    ...typography.body,
-    color: colors.light.textSecondary,
-    marginTop: -spacing.sm,
+  intro: {
+    marginBottom: 0,
   },
   section: {
     gap: spacing.sm,
   },
   noteCard: {
-    padding: spacing.md,
-    borderRadius: radii.lg,
+    padding: spacing.lg,
+    borderRadius: radii.xl,
     backgroundColor: colors.light.surfaceMuted,
-    borderWidth: 1,
-    borderColor: colors.light.border,
   },
   noteText: {
     ...typography.caption,
@@ -225,13 +222,14 @@ const styles = StyleSheet.create({
   },
   hint: {
     ...typography.caption,
+    fontSize: 12,
     color: colors.light.textMuted,
   },
   textInput: {
     ...typography.body,
     borderWidth: 1.5,
-    borderColor: colors.light.borderStrong,
-    borderRadius: radii.md,
+    borderColor: colors.light.border,
+    borderRadius: radii.lg,
     backgroundColor: colors.light.surface,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
@@ -257,11 +255,11 @@ const styles = StyleSheet.create({
     color: colors.light.text,
   },
   uploadZone: {
-    minHeight: 100,
-    borderRadius: radii.lg,
+    minHeight: 108,
+    borderRadius: radii.xl,
     borderWidth: 1.5,
     borderStyle: 'dashed',
-    borderColor: colors.light.borderStrong,
+    borderColor: 'rgba(255, 108, 113, 0.28)',
     backgroundColor: colors.light.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',

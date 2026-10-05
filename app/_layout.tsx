@@ -1,6 +1,5 @@
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { useEffect } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import {
   Manrope_400Regular,
   Manrope_500Medium,
@@ -18,6 +17,7 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
 
+import { LoadingState } from '@/components/ui/LoadingState';
 import { AppProviders } from '@/providers/AppProviders';
 import { useAuthStore } from '@/state/authStore';
 import { useOnboardingStore } from '@/state/onboardingStore';
@@ -87,11 +87,7 @@ function AuthGate({ children }: { children: React.ReactNode }) {
   }, [status, onboardingCompleted, segments, router]);
 
   if (status === 'bootstrapping' || onboardingCompleted === null) {
-    return (
-      <View style={styles.boot}>
-        <ActivityIndicator color={colors.brand.pink} size="large" />
-      </View>
-    );
+    return <LoadingState branded />;
   }
 
   return <>{children}</>;
@@ -138,9 +134,21 @@ export default function RootLayout() {
           <Stack.Screen name="(app)" />
           <Stack.Screen
             name="player/[publicToken]"
-            options={{ headerShown: true, title: 'Moment', animation: 'slide_from_right' }}
+            options={{
+              headerShown: false,
+              animation: 'slide_from_right',
+              gestureEnabled: false,
+              fullScreenGestureEnabled: false,
+            }}
           />
-          <Stack.Screen name="m/[publicToken]" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="m/[publicToken]"
+            options={{
+              headerShown: false,
+              gestureEnabled: false,
+              fullScreenGestureEnabled: false,
+            }}
+          />
           <Stack.Screen name="+not-found" />
         </Stack>
       </AuthGate>
@@ -148,11 +156,3 @@ export default function RootLayout() {
   );
 }
 
-const styles = StyleSheet.create({
-  boot: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.light.background,
-  },
-});

@@ -1,13 +1,18 @@
 import { useState } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { useForgotPasswordMutation } from '@/api/hooks/useAuth';
 import { ApiClientError } from '@/api/client';
 import { Button } from '@/components/ui/Button';
+import { StatusBanner } from '@/components/ui/StatusBanner';
 import { TextField } from '@/components/ui/TextField';
 import { AuthScreen, AuthSwitchLink } from '@/features/auth/AuthScreen';
-import { colors, typography } from '@/theme';
+import { spacing } from '@/theme';
 
+/**
+ * Runtime: app/(auth)/forgot-password → AuthScreen
+ * Visual: same pink→yellow GuestLayout wash as Login/Register.
+ */
 export default function ForgotPasswordScreen() {
   const forgot = useForgotPasswordMutation();
   const [email, setEmail] = useState('');
@@ -35,8 +40,8 @@ export default function ForgotPasswordScreen() {
 
   return (
     <AuthScreen
-      title="Forgot password"
-      subtitle="We’ll email you a reset link if an account exists for that address."
+      title="Forgot your password?"
+      subtitle="No worries — enter your email and we’ll send a reset link if an account exists."
       footer={
         <AuthSwitchLink
           prompt="Remembered it?"
@@ -57,18 +62,21 @@ export default function ForgotPasswordScreen() {
         returnKeyType="send"
         onSubmitEditing={() => void onSubmit()}
       />
-      {message ? <Text style={styles.ok}>{message}</Text> : null}
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-      <Button
-        label="Send reset link"
-        onPress={() => void onSubmit()}
-        loading={forgot.isPending}
-      />
+      {message ? <StatusBanner message={message} tone="success" /> : null}
+      {error ? <StatusBanner message={error} tone="error" /> : null}
+      <View style={styles.cta}>
+        <Button
+          label="Send reset link"
+          onPress={() => void onSubmit()}
+          loading={forgot.isPending}
+        />
+      </View>
     </AuthScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  ok: { ...typography.caption, color: colors.light.success },
-  error: { ...typography.caption, color: colors.light.danger },
+  cta: {
+    marginTop: spacing.sm,
+  },
 });

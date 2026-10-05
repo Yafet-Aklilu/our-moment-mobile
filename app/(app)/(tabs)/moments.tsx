@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 import {
-  ActivityIndicator,
   FlatList,
   RefreshControl,
   StyleSheet,
@@ -10,7 +9,8 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useMomentsQuery } from '@/api/hooks/useMoments';
-import { Button } from '@/components/ui/Button';
+import { ErrorState } from '@/components/ui/ErrorState';
+import { LoadingState } from '@/components/ui/LoadingState';
 import { MomentListCard } from '@/features/moments/MomentListCard';
 import {
   MomentsFilterBar,
@@ -21,8 +21,9 @@ import { colors, spacing, typography } from '@/theme';
 import type { MomentState } from '@/types/api';
 
 /**
- * My Moments — drafts, sent moments, and replies.
- * Filters mirror web: All / Still editing / Sent via API `?state=`.
+ * My Moments — experiences, not database records.
+ * Runtime: MomentsFilterBar + MomentListCard + MomentsEmptyState.
+ * Filters: All / Editing / Sent via API `?state=`.
  */
 export default function MomentsScreen() {
   const insets = useSafeAreaInsets();
@@ -42,29 +43,19 @@ export default function MomentsScreen() {
   }, [filter]);
 
   const countLabel =
-    total === 1 ? '1 moment' : `${total} moments`;
+    total === 1 ? '1 Moment' : `${total} Moments`;
 
   if (moments.isLoading && !moments.data) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator color={colors.brand.pink} size="large" />
-      </View>
-    );
+    return <LoadingState label="Loading your Moments…" />;
   }
 
   if (moments.isError && !moments.data) {
     return (
-      <View style={styles.centered}>
-        <Text style={styles.errorTitle}>Couldn’t load your Moments</Text>
-        <Text style={styles.errorBody}>
-          Check your connection and try again.
-        </Text>
-        <Button
-          label="Try again"
-          variant="secondary"
-          onPress={() => void moments.refetch()}
-        />
-      </View>
+      <ErrorState
+        title="Couldn’t load your Moments"
+        body="Check your connection and try again."
+        onAction={() => void moments.refetch()}
+      />
     );
   }
 
@@ -80,6 +71,7 @@ export default function MomentsScreen() {
         contentContainerStyle={[
           styles.listContent,
           {
+            paddingTop: insets.top + spacing.md,
             paddingBottom: insets.bottom + 110,
           },
           isEmpty ? styles.listEmpty : null,
@@ -94,8 +86,10 @@ export default function MomentsScreen() {
         }
         ListHeaderComponent={
           <View style={styles.header}>
-            <Text style={styles.subtitle}>
-              Drafts, sent Moments, and any replies.
+            <Text style={styles.eyebrow}>Library</Text>
+            <Text style={styles.title}>Your Moments</Text>
+            <Text style={styles.intro}>
+              Drafts you’re shaping and Moments you’ve already sent — gathered with care.
             </Text>
             <MomentsFilterBar
               value={filter}
@@ -128,39 +122,37 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.sm,
     flexGrow: 1,
   },
   listEmpty: {
     flexGrow: 1,
   },
   header: {
-    gap: spacing.md,
-    marginBottom: spacing.md,
+    gap: spacing.sm,
+    marginBottom: spacing.lg,
   },
-  subtitle: {
+  eyebrow: {
+    ...typography.caption,
+    color: colors.brand.pinkDeep,
+    fontFamily: 'Manrope_700Bold',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    fontSize: 11,
+  },
+  title: {
+    ...typography.display,
+    fontSize: 28,
+    lineHeight: 34,
+    letterSpacing: -0.4,
+    color: '#2a1f24',
+  },
+  intro: {
     ...typography.body,
-    color: colors.light.textSecondary,
+    color: '#6b5560',
+    lineHeight: 22,
+    marginBottom: spacing.xs,
   },
   sep: {
-    height: spacing.sm,
-  },
-  centered: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: spacing.xl,
-    gap: spacing.sm,
-    backgroundColor: colors.light.background,
-  },
-  errorTitle: {
-    ...typography.titleSmall,
-    textAlign: 'center',
-  },
-  errorBody: {
-    ...typography.body,
-    color: colors.light.textSecondary,
-    textAlign: 'center',
-    marginBottom: spacing.sm,
+    height: spacing.md,
   },
 });

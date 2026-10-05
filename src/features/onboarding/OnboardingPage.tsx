@@ -13,7 +13,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import type { OnboardingSlide } from '@/features/onboarding/slides';
-import { colors, motion, spacing, typography } from '@/theme';
+import { colors, motion, radii, spacing, typography } from '@/theme';
 
 type Props = {
   slide: OnboardingSlide;
@@ -23,9 +23,13 @@ type Props = {
   width: number;
 };
 
+/**
+ * Full-bleed photo + overlapping cream sheet with eyebrow / title / body.
+ * Clear composition change vs a flat image + text stack.
+ */
 export function OnboardingPage({ slide, index, active, scrollX, width }: Props) {
   const { height } = useWindowDimensions();
-  const imageHeight = Math.min(height * 0.58, 480);
+  const imageHeight = Math.min(height * 0.62, 520);
 
   const imageStyle = useAnimatedStyle(() => {
     const input = [(index - 1) * width, index * width, (index + 1) * width];
@@ -33,7 +37,7 @@ export function OnboardingPage({ slide, index, active, scrollX, width }: Props) 
       opacity: interpolate(scrollX.value, input, [0.55, 1, 0.55], Extrapolation.CLAMP),
       transform: [
         {
-          scale: interpolate(scrollX.value, input, [1.06, 1, 1.06], Extrapolation.CLAMP),
+          scale: interpolate(scrollX.value, input, [1.08, 1, 1.08], Extrapolation.CLAMP),
         },
       ],
     };
@@ -51,14 +55,17 @@ export function OnboardingPage({ slide, index, active, scrollX, width }: Props) 
           accessibilityLabel={slide.imageCredit}
         />
         <LinearGradient
-          colors={['rgba(250,247,242,0)', 'rgba(250,247,242,0.55)', colors.light.background]}
-          locations={[0.35, 0.72, 1]}
-          style={styles.fade}
+          colors={['rgba(28,24,20,0.15)', 'rgba(28,24,20,0.05)', 'transparent']}
+          locations={[0, 0.35, 0.55]}
+          style={StyleSheet.absoluteFill}
         />
       </Animated.View>
 
       <FadeSlideIn active={active}>
-        <View style={styles.copy}>
+        <View style={styles.sheet}>
+          <View style={styles.eyebrowPill}>
+            <Text style={styles.eyebrow}>{slide.eyebrow}</Text>
+          </View>
           <Text style={styles.title}>{slide.title}</Text>
           <Text style={styles.body}>{slide.body}</Text>
         </View>
@@ -85,7 +92,7 @@ function FadeSlideIn({
 
   const style = useAnimatedStyle(() => ({
     opacity: progress.value,
-    transform: [{ translateY: interpolate(progress.value, [0.35, 1], [8, 0]) }],
+    transform: [{ translateY: interpolate(progress.value, [0.35, 1], [14, 0]) }],
   }));
 
   return <Animated.View style={style}>{children}</Animated.View>;
@@ -101,23 +108,49 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: colors.light.surfaceMuted,
   },
-  fade: {
-    ...StyleSheet.absoluteFill,
-  },
-  copy: {
+  sheet: {
+    marginTop: -36,
+    marginHorizontal: spacing.md,
+    backgroundColor: '#FFFFFF',
+    borderRadius: radii.xxl,
     paddingHorizontal: spacing.xl,
-    paddingTop: spacing.md,
+    paddingTop: spacing.xl,
+    paddingBottom: spacing.lg,
     gap: spacing.sm,
+    borderWidth: 1,
+    borderColor: colors.light.border,
+    shadowColor: '#1C1814',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.08,
+    shadowRadius: 24,
+    elevation: 3,
+  },
+  eyebrowPill: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.brand.pinkSoft,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 5,
+    borderRadius: radii.pill,
+    marginBottom: spacing.xxs,
+  },
+  eyebrow: {
+    ...typography.caption,
+    color: colors.brand.pinkDeep,
+    fontFamily: 'Manrope_700Bold',
+    letterSpacing: 0.9,
+    textTransform: 'uppercase',
+    fontSize: 11,
   },
   title: {
     ...typography.display,
-    fontSize: 30,
-    lineHeight: 36,
+    fontSize: 28,
+    lineHeight: 34,
     letterSpacing: -0.5,
+    color: '#2a1f24',
   },
   body: {
     ...typography.body,
-    color: colors.light.textSecondary,
+    color: '#6b5560',
     fontSize: 16,
     lineHeight: 24,
   },

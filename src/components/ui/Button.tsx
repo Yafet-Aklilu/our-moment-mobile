@@ -44,7 +44,7 @@ export const Button = forwardRef<View, Props>(function Button(
         accessibilityLabel={label}
         disabled={isDisabled}
         onPress={onPress}
-        style={[styles.base, styles.pill, shadows.cta, isDisabled && styles.disabled, style]}
+        style={[styles.base, styles.rounded, shadows.cta, isDisabled && styles.disabled, style]}
       >
         <LinearGradient
           colors={[colors.brand.pink, colors.brand.yellow]}
@@ -82,7 +82,7 @@ export const Button = forwardRef<View, Props>(function Button(
       accessibilityLabel={label}
       disabled={isDisabled}
       onPress={onPress}
-      style={[styles.base, styles.pill, shell, isDisabled && styles.disabled, style]}
+      style={[styles.base, styles.rounded, shell, isDisabled && styles.disabled, style]}
     >
       {loading ? (
         <ActivityIndicator color={colors.brand.pink} />
@@ -98,8 +98,8 @@ const styles = StyleSheet.create({
     minHeight: touchMin + 10,
     overflow: 'hidden',
   },
-  pill: {
-    borderRadius: radii.pill,
+  rounded: {
+    borderRadius: radii.button,
   },
   gradient: {
     minHeight: touchMin + 10,

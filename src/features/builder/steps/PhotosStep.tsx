@@ -10,6 +10,7 @@ import {
   useUpdateMomentSettingsMutation,
   useUploadMomentMediaMutation,
 } from '@/api/hooks/useMoments';
+import { PageIntro } from '@/components/ui/PageIntro';
 import { TextField } from '@/components/ui/TextField';
 import { BuilderSaveStatus } from '@/features/builder/BuilderSaveStatus';
 import { asSettings, findImageStepId, findTemplateSteps } from '@/features/builder/contentHelpers';
@@ -159,8 +160,11 @@ export function PhotosStep({ moment }: Props) {
 
   return (
     <View style={styles.root}>
-      <Text style={styles.title}>Photos</Text>
-      <Text style={styles.sub}>Choose how photos show, then add yours.</Text>
+      <PageIntro
+        title="Photos"
+        body="Choose how photos show, then add yours."
+        style={styles.intro}
+      />
 
       <View style={styles.section}>
         <Text style={styles.label}>Gallery style</Text>
@@ -182,7 +186,7 @@ export function PhotosStep({ moment }: Props) {
             {canAddMore ? (
               <Pressable onPress={() => void addPhotos()} style={styles.addButton} disabled={readOnly}>
                 <Ionicons name="add" size={16} color={colors.brand.pinkDeep} />
-                <Text style={styles.addButtonLabel}>Add photos</Text>
+                <Text style={styles.addButtonLabel}>Add</Text>
               </Pressable>
             ) : null}
           </View>
@@ -195,7 +199,7 @@ export function PhotosStep({ moment }: Props) {
               accessibilityRole="button"
             >
               <Text style={styles.dropzoneText}>Start with your first memory</Text>
-              <Text style={styles.dropzoneHint}>Tap to choose photos from your library.</Text>
+              <Text style={styles.dropzoneHint}>Tap to choose from your library.</Text>
             </Pressable>
           ) : (
             <View style={styles.grid}>
@@ -299,13 +303,8 @@ const styles = StyleSheet.create({
   root: {
     gap: spacing.lg,
   },
-  title: {
-    ...typography.titleSmall,
-  },
-  sub: {
-    ...typography.body,
-    color: colors.light.textSecondary,
-    marginTop: -spacing.md,
+  intro: {
+    marginBottom: 0,
   },
   section: {
     gap: spacing.sm,
@@ -315,10 +314,8 @@ const styles = StyleSheet.create({
     color: colors.light.text,
   },
   emptyCard: {
-    padding: spacing.md,
-    borderRadius: radii.lg,
-    borderWidth: 1,
-    borderColor: colors.light.border,
+    padding: spacing.lg,
+    borderRadius: radii.xl,
     backgroundColor: colors.light.surfaceMuted,
   },
   emptyText: {
@@ -334,11 +331,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 6,
-    borderRadius: radii.pill,
-    borderWidth: 1,
-    borderColor: colors.brand.pinkDeep,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 8,
+    borderRadius: radii.md,
+    backgroundColor: colors.brand.pinkSoft,
   },
   addButtonLabel: {
     ...typography.label,
@@ -346,16 +342,16 @@ const styles = StyleSheet.create({
     color: colors.brand.pinkDeep,
   },
   dropzone: {
-    minHeight: 140,
-    borderRadius: radii.lg,
+    minHeight: 148,
+    borderRadius: radii.xl,
     borderWidth: 1.5,
     borderStyle: 'dashed',
-    borderColor: colors.light.borderStrong,
+    borderColor: 'rgba(255, 108, 113, 0.28)',
     backgroundColor: colors.light.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 4,
-    padding: spacing.md,
+    padding: spacing.lg,
   },
   dropzoneText: {
     ...typography.label,
@@ -383,12 +379,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.sm,
-    paddingVertical: 6,
-    backgroundColor: colors.light.surfaceMuted,
+    paddingVertical: 8,
+    backgroundColor: colors.light.surfaceWarm,
   },
   cardIndex: {
     ...typography.caption,
-    color: colors.light.textSecondary,
+    fontSize: 12,
+    color: colors.light.textMuted,
   },
   cardImage: {
     width: '100%',

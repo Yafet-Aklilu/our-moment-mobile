@@ -5,11 +5,16 @@ import { useState } from 'react';
 import { useRegisterMutation } from '@/api/hooks/useAuth';
 import { ApiClientError } from '@/api/client';
 import { Button } from '@/components/ui/Button';
+import { StatusBanner } from '@/components/ui/StatusBanner';
 import { TextField } from '@/components/ui/TextField';
 import { env } from '@/config/env';
 import { AuthScreen, AuthSwitchLink } from '@/features/auth/AuthScreen';
-import { colors, spacing, typography } from '@/theme';
+import { colors, radii, spacing, typography } from '@/theme';
 
+/**
+ * Runtime: app/(auth)/register → AuthScreen + TextField + Button
+ * Visual: pink→yellow wash + white floating card.
+ */
 export default function RegisterScreen() {
   const register = useRegisterMutation();
   const [name, setName] = useState('');
@@ -48,8 +53,8 @@ export default function RegisterScreen() {
 
   return (
     <AuthScreen
-      title="Sign up"
-      subtitle="Give someone a moment they can open — and keep."
+      title="Create your account"
+      subtitle="Give someone a moment they can open — and keep forever."
       footer={
         <AuthSwitchLink
           prompt="Already have an account?"
@@ -123,13 +128,15 @@ export default function RegisterScreen() {
         </Text>
       </Pressable>
 
-      {formError ? <Text style={styles.error}>{formError}</Text> : null}
+      {formError ? <StatusBanner message={formError} tone="error" /> : null}
 
-      <Button
-        label="Create Account"
-        onPress={() => void onSubmit()}
-        loading={register.isPending}
-      />
+      <View style={styles.cta}>
+        <Button
+          label="Create account"
+          onPress={() => void onSubmit()}
+          loading={register.isPending}
+        />
+      </View>
     </AuthScreen>
   );
 }
@@ -139,35 +146,39 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: spacing.sm,
+    backgroundColor: colors.light.surfaceWarm,
+    borderRadius: radii.lg,
+    padding: spacing.md,
+    borderWidth: 1,
+    borderColor: '#eadfd4',
   },
   checkbox: {
     width: 22,
     height: 22,
-    borderRadius: 11,
+    borderRadius: 7,
     borderWidth: 1.5,
-    borderColor: colors.light.borderStrong,
+    borderColor: '#eadfd4',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 2,
-    backgroundColor: colors.light.surface,
+    marginTop: 1,
+    backgroundColor: '#FFFFFF',
   },
   checkboxOn: {
-    backgroundColor: colors.brand.charcoal,
-    borderColor: colors.brand.charcoal,
+    backgroundColor: colors.brand.pink,
+    borderColor: colors.brand.pink,
   },
   termsText: {
     ...typography.body,
     flex: 1,
     fontSize: 14,
     lineHeight: 20,
-    color: colors.light.textSecondary,
+    color: '#6b5560',
   },
   termsLink: {
     color: colors.brand.pinkDeep,
     fontFamily: 'Manrope_600SemiBold',
   },
-  error: {
-    ...typography.caption,
-    color: colors.light.danger,
+  cta: {
+    marginTop: spacing.xs,
   },
 });

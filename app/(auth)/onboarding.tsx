@@ -18,6 +18,7 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 
+import { BrandMark } from '@/components/ui/BrandMark';
 import { Button } from '@/components/ui/Button';
 import { OnboardingPage } from '@/features/onboarding/OnboardingPage';
 import { ONBOARDING_SLIDES } from '@/features/onboarding/slides';
@@ -42,7 +43,7 @@ function Dot({ active }: { active: boolean }) {
   }, [active, progress]);
 
   const style = useAnimatedStyle(() => ({
-    width: 8 + progress.value * 14,
+    width: 8 + progress.value * 18,
     opacity: 0.35 + progress.value * 0.65,
     backgroundColor: colors.brand.pink,
   }));
@@ -51,9 +52,7 @@ function Dot({ active }: { active: boolean }) {
 }
 
 /**
- * First-run product introduction — 3 connected pages, then welcome/auth.
- * Composition borrows image-led hierarchy from the reference welcome screen,
- * expressed with warm OurMoment surfaces (not dark cinematic chrome).
+ * First-run product introduction — image pages + cream sheet + pink→yellow CTA.
  */
 export default function OnboardingScreen() {
   const router = useRouter();
@@ -90,13 +89,16 @@ export default function OnboardingScreen() {
 
   return (
     <View style={styles.root}>
-      <View style={[styles.topBar, { paddingTop: insets.top + spacing.xs }]}>
-        <Text style={styles.brand}>OurMoment</Text>
+      <View style={[styles.topBar, { paddingTop: insets.top + spacing.sm }]}>
+        <View style={styles.brandChip}>
+          <BrandMark size="sm" horizontal />
+        </View>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Skip onboarding"
           hitSlop={12}
           onPress={() => void finish()}
+          style={styles.skipPill}
         >
           <Text style={styles.skip}>Skip</Text>
         </Pressable>
@@ -125,10 +127,15 @@ export default function OnboardingScreen() {
         ))}
       </ScrollView>
 
-      <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, spacing.md) + spacing.sm }]}>
+      <View
+        style={[
+          styles.footer,
+          { paddingBottom: Math.max(insets.bottom, spacing.md) + spacing.sm },
+        ]}
+      >
         <Pagination count={ONBOARDING_SLIDES.length} index={index} />
         <Button
-          label={index >= last ? 'Continue' : 'Next'}
+          label={index >= last ? 'Start creating' : 'Continue'}
           onPress={goNext}
         />
       </View>
@@ -147,24 +154,26 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 2,
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: spacing.md,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  brand: {
-    ...typography.label,
-    color: '#FFFFFF',
-    textShadowColor: 'rgba(28,24,20,0.35)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 4,
+  brandChip: {
+    backgroundColor: 'rgba(255,255,255,0.94)',
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.pill,
+  },
+  skipPill: {
+    backgroundColor: 'rgba(255,255,255,0.94)',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs + 2,
+    borderRadius: radii.pill,
   },
   skip: {
     ...typography.label,
-    color: '#FFFFFF',
-    textShadowColor: 'rgba(28,24,20,0.35)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 4,
+    color: colors.light.text,
   },
   pager: {
     flex: 1,
@@ -172,6 +181,7 @@ const styles = StyleSheet.create({
   footer: {
     paddingHorizontal: spacing.xl,
     gap: spacing.md,
+    paddingTop: spacing.sm,
     backgroundColor: colors.light.background,
   },
   dots: {

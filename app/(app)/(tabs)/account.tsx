@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -16,6 +17,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLogoutMutation, useMeQuery } from '@/api/hooks/useAuth';
 import { useCreditsQuery } from '@/api/hooks/useMoments';
 import { Button } from '@/components/ui/Button';
+import { ErrorState } from '@/components/ui/ErrorState';
+import { LoadingState } from '@/components/ui/LoadingState';
+import { SectionLabel } from '@/components/ui/SectionLabel';
+import { StatusBanner } from '@/components/ui/StatusBanner';
 import { AccountSettingsList } from '@/features/account/AccountSettingsList';
 import { AvatarPickerSheet } from '@/features/account/AvatarPickerSheet';
 import { CreditsCard } from '@/features/account/CreditsCard';
@@ -54,19 +59,16 @@ export default function AccountScreen() {
   }, [userId, hydrate]);
 
   if (me.isLoading && !me.data) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator color={colors.brand.pink} size="large" />
-      </View>
-    );
+    return <LoadingState label="Loading your account…" />;
   }
 
   if (me.isError && !me.data) {
     return (
-      <View style={styles.centered}>
-        <Text style={styles.errorTitle}>Couldn’t load your account</Text>
-        <Button label="Try again" variant="secondary" onPress={() => void me.refetch()} />
-      </View>
+      <ErrorState
+        title="Couldn’t load your account"
+        body="Check your connection and try again."
+        onAction={() => void me.refetch()}
+      />
     );
   }
 
@@ -117,6 +119,12 @@ export default function AccountScreen() {
           entering={FadeInDown.duration(motion.duration.normal).springify()}
           style={[styles.hero, shadows.card]}
         >
+          <LinearGradient
+            colors={[colors.brand.pinkSoft, colors.brand.yellowSoft, 'transparent']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.heroWash}
+          />
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Change profile picture"
@@ -149,7 +157,7 @@ export default function AccountScreen() {
           entering={FadeInDown.delay(120).duration(motion.duration.normal).springify()}
           style={styles.section}
         >
-          <Text style={styles.sectionTitle}>Account</Text>
+          <SectionLabel title="Account" subtitle="Shortcuts and policies" />
           <AccountSettingsList
             rows={[
               {
@@ -191,6 +199,7 @@ export default function AccountScreen() {
 
         <Animated.View
           entering={FadeInDown.delay(160).duration(motion.duration.normal).springify()}
+          style={styles.signOutBlock}
         >
           <Button
             label="Sign out"
@@ -198,10 +207,11 @@ export default function AccountScreen() {
             loading={logout.isPending}
             onPress={confirmSignOut}
           />
-          <Text style={styles.footnote}>
-            Profile photos sync across devices is not available yet — looks chosen here stay on
-            this phone.
-          </Text>
+          <StatusBanner
+            tone="info"
+            message="Profile looks stay on this phone for now — syncing across devices isn’t available yet."
+            style={styles.footnote}
+          />
         </Animated.View>
       </ScrollView>
 
@@ -243,14 +253,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     gap: spacing.lg,
   },
-  centered: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: spacing.xl,
-    gap: spacing.sm,
-    backgroundColor: colors.light.background,
-  },
   hero: {
     alignItems: 'center',
     backgroundColor: colors.light.surface,
@@ -260,6 +262,11 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xl,
     paddingHorizontal: spacing.lg,
     gap: spacing.xs,
+    overflow: 'hidden',
+  },
+  heroWash: {
+    ...StyleSheet.absoluteFill,
+    opacity: 0.9,
   },
   avatarPress: {
     marginBottom: spacing.sm,
@@ -277,7 +284,7 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: colors.brand.charcoal,
+    backgroundColor: colors.brand.pink,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
@@ -300,18 +307,11 @@ const styles = StyleSheet.create({
   section: {
     gap: spacing.sm,
   },
-  sectionTitle: {
-    ...typography.subtitle,
+  signOutBlock: {
+    gap: spacing.md,
   },
   footnote: {
-    ...typography.caption,
-    textAlign: 'center',
-    marginTop: spacing.md,
-    paddingHorizontal: spacing.md,
-  },
-  errorTitle: {
-    ...typography.titleSmall,
-    textAlign: 'center',
+    marginTop: 0,
   },
   busy: {
     ...StyleSheet.absoluteFill,

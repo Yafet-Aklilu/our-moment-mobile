@@ -2,23 +2,24 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Link } from 'expo-router';
 import { Linking, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BrandMark } from '@/components/ui/BrandMark';
 import { Button } from '@/components/ui/Button';
 import { env } from '@/config/env';
 import { ONBOARDING_SLIDES } from '@/features/onboarding/slides';
-import { colors, spacing, typography } from '@/theme';
+import { colors, motion, radii, shadows, spacing, typography } from '@/theme';
 
 /**
- * Auth choice after onboarding (and landing for returning anonymous users).
- * Structure: image-led top + brand + stacked CTAs — warm OurMoment treatment
- * (not the dark reference chrome / social providers).
+ * Auth choice after onboarding.
+ * Composition: full-bleed photo → overlapping white card with brand + CTAs
+ * on a soft cream footer — clearly not a generic auth landing.
  */
 export default function WelcomeScreen() {
   const insets = useSafeAreaInsets();
   const { height } = useWindowDimensions();
-  const heroHeight = Math.min(height * 0.48, 420);
+  const heroHeight = Math.min(height * 0.52, 460);
   const hero = ONBOARDING_SLIDES[0];
 
   return (
@@ -32,26 +33,29 @@ export default function WelcomeScreen() {
           cachePolicy="memory-disk"
         />
         <LinearGradient
-          colors={['rgba(250,247,242,0)', 'rgba(250,247,242,0.7)', colors.light.background]}
-          locations={[0.4, 0.78, 1]}
+          colors={['rgba(28,24,20,0.25)', 'transparent', colors.light.background]}
+          locations={[0, 0.45, 1]}
           style={StyleSheet.absoluteFill}
         />
+        <View style={[styles.heroBrand, { top: insets.top + spacing.sm }]}>
+          <BrandMark size="sm" horizontal />
+        </View>
       </View>
 
-      <View
+      <Animated.View
+        entering={FadeInDown.duration(motion.duration.normal).springify()}
         style={[
-          styles.sheet,
-          { paddingBottom: Math.max(insets.bottom, spacing.md) + spacing.md },
+          styles.card,
+          shadows.soft,
+          { marginBottom: Math.max(insets.bottom, spacing.md) + spacing.sm },
         ]}
       >
-        <View style={styles.brandBlock}>
-          <BrandMark />
-          <Text style={styles.brandName}>OurMoment</Text>
-          <Text style={styles.headline}>Ready to create a Moment?</Text>
-          <Text style={styles.sub}>
-            Create for free. Pay only when you’re ready to send.
-          </Text>
-        </View>
+        <View style={styles.accentBar} />
+        <Text style={styles.eyebrow}>Welcome</Text>
+        <Text style={styles.headline}>Ready to create a Moment?</Text>
+        <Text style={styles.sub}>
+          Create for free. Pay only when you’re ready to send something beautiful.
+        </Text>
 
         <View style={styles.actions}>
           <Link href="/(auth)/register" asChild>
@@ -67,17 +71,17 @@ export default function WelcomeScreen() {
             style={styles.legalLink}
             onPress={() => void Linking.openURL(`${env.webOrigin}/privacy`)}
           >
-            Privacy policy
+            Privacy
           </Text>
           <Text style={styles.legalDot}>·</Text>
           <Text
             style={styles.legalLink}
             onPress={() => void Linking.openURL(`${env.webOrigin}/terms`)}
           >
-            Terms of service
+            Terms
           </Text>
         </View>
-      </View>
+      </Animated.View>
     </View>
   );
 }
@@ -86,40 +90,65 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: colors.light.background,
+    justifyContent: 'space-between',
   },
   hero: {
     width: '100%',
     backgroundColor: colors.light.surfaceMuted,
   },
-  sheet: {
-    flex: 1,
-    marginTop: -spacing.xxl,
+  heroBrand: {
+    position: 'absolute',
+    left: spacing.md,
+    backgroundColor: 'rgba(255,255,255,0.94)',
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.pill,
+  },
+  card: {
+    marginTop: -56,
+    marginHorizontal: spacing.md,
+    backgroundColor: '#FFFFFF',
+    borderRadius: radii.xxl,
     paddingHorizontal: spacing.xl,
-    justifyContent: 'space-between',
+    paddingTop: spacing.xl,
+    paddingBottom: spacing.lg,
+    borderWidth: 1,
+    borderColor: colors.light.border,
+    overflow: 'hidden',
   },
-  brandBlock: {
-    alignItems: 'center',
-    gap: spacing.sm,
+  accentBar: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 4,
+    backgroundColor: colors.brand.pink,
   },
-  brandName: {
-    ...typography.title,
-    color: colors.brand.pink,
-    marginTop: spacing.xs,
+  eyebrow: {
+    ...typography.caption,
+    color: colors.brand.pinkDeep,
+    fontFamily: 'Manrope_700Bold',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    fontSize: 11,
+    marginBottom: spacing.sm,
   },
   headline: {
-    ...typography.titleSmall,
-    textAlign: 'center',
-    marginTop: spacing.sm,
+    ...typography.display,
+    fontSize: 30,
+    lineHeight: 36,
+    letterSpacing: -0.5,
+    color: '#2a1f24',
+    marginBottom: spacing.sm,
   },
   sub: {
     ...typography.body,
-    color: colors.light.textSecondary,
-    textAlign: 'center',
-    maxWidth: 320,
+    color: '#6b5560',
+    lineHeight: 22,
+    marginBottom: spacing.xl,
   },
   actions: {
     gap: spacing.sm,
-    marginTop: spacing.xl,
   },
   legal: {
     flexDirection: 'row',

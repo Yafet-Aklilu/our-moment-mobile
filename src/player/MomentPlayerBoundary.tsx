@@ -1,6 +1,9 @@
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { usePublicMomentQuery } from '@/api/hooks/useMoments';
+import { LoadingState } from '@/components/ui/LoadingState';
+import { asMomentConfig, isMomentConfigEmpty } from '@/player/momentConfig';
+import { NativeMomentPlayer } from '@/player/NativeMomentPlayer';
 import { colors, typography } from '@/theme';
 
 import { resolvePlayerMode } from './types';
@@ -8,21 +11,24 @@ import { WebViewFallbackPlayer } from './WebViewFallback';
 
 type Props = {
   publicToken: string;
+  onClose?: () => void;
 };
 
 /**
  * Stable boundary used by deep links, QR scan, and in-app open.
- * Native player slots in here later without route changes.
+ *
+ * Public playback defaults to WebView for full web parity (audio,
+ * remote lock verify, reactions). When `NATIVE_PLAYER_READY` is true and
+ * the public config is playable, we use the same NativeMomentPlayer as
+ * owner preview — without changing routes or share URLs.
  */
-export function MomentPlayerBoundary({ publicToken }: Props) {
+export function MomentPlayerBoundary({ publicToken, onClose }: Props) {
   const mode = resolvePlayerMode();
   const query = usePublicMomentQuery(publicToken);
 
   if (query.isLoading) {
     return (
-      <View style={styles.centered}>
-        <ActivityIndicator color={colors.brand.pink} size="large" />
-      </View>
+      <LoadingState style={{ backgroundColor: colors.moment.background }} />
     );
   }
 
@@ -37,19 +43,20 @@ export function MomentPlayerBoundary({ publicToken }: Props) {
     );
   }
 
-  if (mode === 'webview-fallback') {
-    return <WebViewFallbackPlayer publicToken={publicToken} />;
+  if (mode === 'native') {
+    const config = asMomentConfig(query.data.config);
+    if (config && !isMomentConfigEmpty(config)) {
+      return (
+        <NativeMomentPlayer
+          config={config}
+          onClose={onClose ?? (() => undefined)}
+        />
+      );
+    }
+    // Fall through to WebView if native config is empty/unusable.
   }
 
-  // Native player placeholder — config already fetched for future scenes.
-  return (
-    <View style={styles.centered}>
-      <Text style={styles.title}>Native Moment Player</Text>
-      <Text style={styles.body}>
-        Scene player coming soon. Config loaded for moment #{query.data.moment_id}.
-      </Text>
-    </View>
-  );
+  return <WebViewFallbackPlayer publicToken={publicToken} />;
 }
 
 const styles = StyleSheet.create({

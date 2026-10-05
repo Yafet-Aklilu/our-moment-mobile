@@ -40,22 +40,24 @@ const styles = StyleSheet.create({
   chip: {
     paddingHorizontal: 14,
     paddingVertical: 10,
-    borderRadius: radii.pill,
+    borderRadius: radii.md,
     backgroundColor: colors.light.surface,
     borderWidth: 1,
     borderColor: colors.light.border,
   },
   chipActive: {
-    backgroundColor: colors.brand.charcoal,
-    borderColor: colors.brand.charcoal,
+    backgroundColor: colors.brand.pinkSoft,
+    borderColor: 'rgba(255, 108, 113, 0.35)',
   },
   label: {
     ...typography.label,
     fontSize: 13,
-    color: colors.light.text,
+    fontFamily: 'Manrope_500Medium',
+    color: colors.light.textSecondary,
   },
   labelActive: {
-    color: colors.brand.soft,
+    fontFamily: 'Manrope_600SemiBold',
+    color: colors.brand.pinkDeep,
   },
   disabled: {
     opacity: 0.5,

@@ -4,96 +4,101 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { ProfileAvatarView } from '@/features/account/ProfileAvatarView';
 import type { ProfileAvatar } from '@/state/profileStore';
-import { colors, spacing, typography } from '@/theme';
+import { colors, radii, spacing, typography } from '@/theme';
 
 type Props = {
   firstName: string;
-  /** Full display name for initials fallback */
   name?: string | null;
   avatar: ProfileAvatar | null;
   reactionCount: number;
 };
 
+function timeGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning';
+  if (hour < 18) return 'Good afternoon';
+  return 'Good evening';
+}
+
+/**
+ * Warm personal greeting — editorial, not dashboard chrome.
+ */
 export function HomeHeader({ firstName, name, avatar, reactionCount }: Props) {
   return (
-    <View style={styles.row}>
-      <View style={styles.left}>
-        <ProfileAvatarView size={44} name={name ?? firstName} avatar={avatar} />
+    <View style={styles.wrap}>
+      <View style={styles.row}>
+        <ProfileAvatarView size={52} name={name ?? firstName} avatar={avatar} />
         <View style={styles.textCol}>
-          <Text style={styles.hello}>Hello, {firstName}</Text>
-          <Text style={styles.sub}>Ready to give someone a moment?</Text>
+          <Text style={styles.eyebrow}>{timeGreeting()}</Text>
+          <Text style={styles.hello}>{firstName}</Text>
         </View>
-      </View>
 
-      <Link href="/(app)/(tabs)/reactions" asChild>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Reactions"
-          hitSlop={8}
-          style={styles.bell}
-        >
-          <Ionicons name="heart-outline" size={22} color={colors.light.text} />
-          {reactionCount > 0 ? (
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>
-                {reactionCount > 9 ? '9+' : reactionCount}
+        <Link href="/(app)/(tabs)/reactions" asChild>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Reactions"
+            hitSlop={8}
+            style={styles.reactionChip}
+          >
+            <Ionicons name="heart" size={18} color={colors.brand.pinkDeep} />
+            {reactionCount > 0 ? (
+              <Text style={styles.reactionCount}>
+                {reactionCount > 99 ? '99+' : reactionCount}
               </Text>
-            </View>
-          ) : null}
-        </Pressable>
-      </Link>
+            ) : null}
+          </Pressable>
+        </Link>
+      </View>
+      <Text style={styles.sub}>Ready to give someone a Moment they’ll keep?</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  wrap: {
+    gap: spacing.sm,
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     gap: spacing.md,
-  },
-  left: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    flex: 1,
   },
   textCol: {
     flex: 1,
     gap: 2,
+    minWidth: 0,
+  },
+  eyebrow: {
+    ...typography.caption,
+    color: colors.brand.pinkDeep,
+    fontFamily: 'Manrope_600SemiBold',
+    letterSpacing: 0.4,
   },
   hello: {
-    ...typography.subtitle,
+    ...typography.display,
+    fontSize: 28,
+    lineHeight: 34,
+    letterSpacing: -0.5,
+    color: '#2a1f24',
   },
   sub: {
-    ...typography.caption,
+    ...typography.body,
+    color: '#6b5560',
+    lineHeight: 22,
+    paddingLeft: 2,
   },
-  bell: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: colors.light.surface,
-    borderWidth: 1,
-    borderColor: colors.light.border,
+  reactionChip: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    gap: 6,
+    minHeight: 44,
+    paddingHorizontal: spacing.md,
+    borderRadius: radii.pill,
+    backgroundColor: colors.brand.pinkSoft,
   },
-  badge: {
-    position: 'absolute',
-    top: 6,
-    right: 6,
-    minWidth: 16,
-    height: 16,
-    borderRadius: 8,
-    backgroundColor: colors.brand.pink,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 3,
-  },
-  badgeText: {
-    color: '#fff',
-    fontSize: 9,
-    fontFamily: 'Manrope_700Bold',
+  reactionCount: {
+    ...typography.label,
+    color: colors.brand.pinkDeep,
+    fontSize: 13,
   },
 });

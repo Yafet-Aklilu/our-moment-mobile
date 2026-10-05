@@ -31,7 +31,7 @@ export function BuilderStepRail({ steps, activeId, onSelect }: Props) {
             <Text style={[styles.label, active && styles.labelActive]} numberOfLines={1}>
               {step.label}
             </Text>
-            {!step.implemented ? <View style={styles.dot} /> : null}
+            {!step.implemented ? <View style={[styles.dot, active && styles.dotActive]} /> : null}
           </Pressable>
         );
       })}
@@ -42,47 +42,50 @@ export function BuilderStepRail({ steps, activeId, onSelect }: Props) {
 const styles = StyleSheet.create({
   rail: {
     paddingHorizontal: spacing.lg,
-    gap: spacing.sm,
-    paddingVertical: spacing.xs,
+    gap: spacing.xs,
+    paddingVertical: spacing.xxs,
   },
   chip: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: radii.pill,
-    backgroundColor: colors.light.surface,
-    borderWidth: 1,
-    borderColor: colors.light.border,
-    maxWidth: 200,
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: radii.md,
+    backgroundColor: 'transparent',
+    maxWidth: 180,
   },
   chipActive: {
-    backgroundColor: colors.brand.charcoal,
-    borderColor: colors.brand.charcoal,
+    backgroundColor: colors.brand.pinkSoft,
   },
   index: {
     ...typography.caption,
-    fontFamily: 'Manrope_700Bold',
-    color: colors.brand.pinkDeep,
-    minWidth: 16,
+    fontFamily: 'Manrope_600SemiBold',
+    fontSize: 12,
+    color: colors.light.textMuted,
+    minWidth: 14,
   },
   indexActive: {
-    color: colors.brand.yellow,
+    color: colors.brand.pinkDeep,
   },
   label: {
     ...typography.label,
     fontSize: 13,
-    color: colors.light.text,
+    fontFamily: 'Manrope_500Medium',
+    color: colors.light.textSecondary,
     flexShrink: 1,
   },
   labelActive: {
-    color: colors.brand.soft,
+    fontFamily: 'Manrope_600SemiBold',
+    color: colors.light.text,
   },
   dot: {
-    width: 6,
-    height: 6,
+    width: 5,
+    height: 5,
     borderRadius: 3,
     backgroundColor: colors.light.borderStrong,
+  },
+  dotActive: {
+    backgroundColor: colors.brand.yellow,
   },
 });

@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
 import { useUpdateMomentSettingsMutation } from '@/api/hooks/useMoments';
+import { PageIntro } from '@/components/ui/PageIntro';
 import { BuilderSaveStatus } from '@/features/builder/BuilderSaveStatus';
 import { asSettings } from '@/features/builder/contentHelpers';
 import { BACKGROUND_STYLES, MOODS } from '@/features/builder/experienceOptions';
@@ -41,8 +42,11 @@ export function LookStep({ moment }: Props) {
 
   return (
     <View style={styles.root}>
-      <Text style={styles.title}>Look</Text>
-      <Text style={styles.sub}>Choose a mood, then refine atmosphere and type.</Text>
+      <PageIntro
+        title="Look"
+        body="Choose a mood, then refine the atmosphere."
+        style={styles.intro}
+      />
 
       <View style={styles.section}>
         <Text style={styles.label}>Mood</Text>
@@ -68,13 +72,8 @@ const styles = StyleSheet.create({
   root: {
     gap: spacing.lg,
   },
-  title: {
-    ...typography.titleSmall,
-  },
-  sub: {
-    ...typography.body,
-    color: colors.light.textSecondary,
-    marginTop: -spacing.md,
+  intro: {
+    marginBottom: 0,
   },
   section: {
     gap: spacing.sm,

@@ -79,25 +79,13 @@ export function TemplateGridCard({ template, index, disabled, onPress }: Props) 
             />
           )}
 
-          <LinearGradient
-            colors={['transparent', 'rgba(28,24,20,0.55)']}
-            locations={[0.45, 1]}
-            style={styles.scrim}
-          />
-
           <View style={styles.tag}>
             <Text style={styles.tagText}>{tag}</Text>
           </View>
 
           {loading ? (
             <View style={styles.loader}>
-              <ActivityIndicator color="#fff" />
-            </View>
-          ) : null}
-
-          {failed && coverUrl ? (
-            <View style={styles.errorBanner}>
-              <Text style={styles.errorText}>Couldn’t load image</Text>
+              <ActivityIndicator color={colors.brand.pink} />
             </View>
           ) : null}
         </View>
@@ -134,9 +122,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.light.surfaceMuted,
     overflow: 'hidden',
   },
-  scrim: {
-    ...StyleSheet.absoluteFill,
-  },
   tag: {
     position: 'absolute',
     top: spacing.sm,
@@ -144,11 +129,11 @@ const styles = StyleSheet.create({
     borderRadius: radii.pill,
     paddingHorizontal: 10,
     paddingVertical: 4,
-    backgroundColor: 'rgba(28,24,20,0.45)',
+    backgroundColor: 'rgba(250,247,242,0.92)',
   },
   tagText: {
     ...typography.caption,
-    color: '#fff',
+    color: colors.brand.pinkDeep,
     fontFamily: 'Manrope_600SemiBold',
     fontSize: 11,
     textTransform: 'uppercase',
@@ -158,23 +143,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFill,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(28,24,20,0.15)',
-  },
-  errorBanner: {
-    position: 'absolute',
-    left: spacing.sm,
-    right: spacing.sm,
-    bottom: spacing.sm,
-    borderRadius: radii.sm,
-    paddingVertical: 6,
-    paddingHorizontal: 8,
-    backgroundColor: 'rgba(28,24,20,0.7)',
-  },
-  errorText: {
-    ...typography.caption,
-    color: '#fff',
-    textAlign: 'center',
-    fontSize: 11,
+    backgroundColor: 'rgba(250,247,242,0.35)',
   },
   meta: {
     padding: spacing.sm,

@@ -19,7 +19,7 @@ import { QuestionStep } from '@/features/builder/steps/QuestionStep';
 import { StoryDateStep } from '@/features/builder/steps/StoryDateStep';
 import { StoryMessageStep } from '@/features/builder/steps/StoryMessageStep';
 import type { BuilderStep, BuilderStepId } from '@/features/builder/types';
-import { colors, motion, spacing, typography } from '@/theme';
+import { colors, motion, radii, spacing, typography } from '@/theme';
 import type { Moment } from '@/types/api';
 
 type Props = {
@@ -44,6 +44,8 @@ export function BuilderShell({ moment }: Props) {
   );
   const activeStep = steps[activeIndex] ?? steps[0];
   const isLast = steps.length > 0 && activeIndex === steps.length - 1;
+  const stepNumber = Math.min(activeIndex + 1, steps.length);
+  const progress = steps.length > 0 ? stepNumber / steps.length : 0;
 
   const goPrev = () => {
     if (activeIndex <= 0) return;
@@ -63,19 +65,31 @@ export function BuilderShell({ moment }: Props) {
     <View style={styles.root}>
       <View style={styles.header}>
         <View style={styles.headerRow}>
-          <Text style={styles.progress}>
-            Step {Math.min(activeIndex + 1, steps.length)} of {steps.length}
-            {moment.template?.title ? ` · ${moment.template.title}` : ''}
-          </Text>
+          <View style={styles.progressCol}>
+            <Text style={styles.progressLabel}>
+              Step {stepNumber} of {steps.length}
+            </Text>
+            {moment.template?.title ? (
+              <Text style={styles.templateTitle} numberOfLines={1}>
+                {moment.template.title}
+              </Text>
+            ) : null}
+          </View>
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Preview this Moment"
             hitSlop={8}
             onPress={() => router.push(`/(app)/moments/${moment.id}/preview`)}
+            style={({ pressed }) => [styles.previewChip, pressed && styles.previewChipPressed]}
           >
             <Text style={styles.previewLink}>Preview</Text>
           </Pressable>
         </View>
+
+        <View style={styles.progressTrack}>
+          <View style={[styles.progressFill, { width: `${Math.round(progress * 100)}%` }]} />
+        </View>
+
         <BuilderStepRail
           steps={steps}
           activeId={activeStep?.id ?? 'details'}
@@ -160,33 +174,66 @@ const styles = StyleSheet.create({
   },
   header: {
     gap: spacing.sm,
-    paddingTop: spacing.sm,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.sm,
+    backgroundColor: colors.light.surfaceWarm,
     borderBottomWidth: 1,
     borderBottomColor: colors.light.border,
-    paddingBottom: spacing.sm,
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.lg,
+    gap: spacing.md,
   },
-  progress: {
+  progressCol: {
+    flex: 1,
+    gap: 2,
+    minWidth: 0,
+  },
+  progressLabel: {
     ...typography.caption,
+    color: colors.light.textMuted,
+    fontFamily: 'Manrope_500Medium',
+  },
+  templateTitle: {
+    ...typography.label,
+    fontSize: 13,
     color: colors.light.textSecondary,
-    flexShrink: 1,
+  },
+  previewChip: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.pill,
+    backgroundColor: colors.brand.pinkSoft,
+  },
+  previewChipPressed: {
+    opacity: 0.85,
   },
   previewLink: {
     ...typography.label,
     fontSize: 13,
     color: colors.brand.pinkDeep,
   },
+  progressTrack: {
+    height: 3,
+    marginHorizontal: spacing.lg,
+    borderRadius: radii.pill,
+    backgroundColor: colors.light.surfaceContainer,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    borderRadius: radii.pill,
+    backgroundColor: colors.brand.pink,
+  },
   scroll: {
     flex: 1,
   },
   content: {
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
+    paddingTop: spacing.xl,
   },
   empty: {
     ...typography.body,

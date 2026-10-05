@@ -14,13 +14,12 @@ import { colors, radii, spacing, typography } from '@/theme';
 type Props = TextInputProps & {
   label: string;
   error?: string;
-  /** Enables show/hide control when the field is a password. */
   isPassword?: boolean;
 };
 
 /**
- * Auth-oriented text field — clear label, focus ring, password toggle.
- * Structure inspired by the reference form; OurMoment tokens for look.
+ * Soft auth field — cream fill, rounded-2xl feel, pink focus ring.
+ * Matches redesigned web GuestLayout inputs.
  */
 export function TextField({
   label,
@@ -47,7 +46,7 @@ export function TextField({
         ]}
       >
         <TextInput
-          placeholderTextColor={colors.light.textMuted}
+          placeholderTextColor="rgba(138,106,114,0.7)"
           style={[styles.input, style]}
           secureTextEntry={showToggle ? hidden : secureTextEntry}
           onFocus={(e) => {
@@ -71,7 +70,7 @@ export function TextField({
             <Ionicons
               name={hidden ? 'eye-off-outline' : 'eye-outline'}
               size={22}
-              color={colors.light.textMuted}
+              color={focused ? colors.brand.pinkDeep : colors.light.textMuted}
             />
           </Pressable>
         ) : null}
@@ -83,34 +82,40 @@ export function TextField({
 
 const styles = StyleSheet.create({
   wrap: {
-    gap: spacing.xs,
+    gap: 8,
   },
   label: {
     ...typography.label,
-    color: colors.light.text,
+    color: '#2a1f24',
+    fontSize: 14,
   },
   inputShell: {
-    minHeight: 54,
-    borderRadius: radii.md,
+    minHeight: 56,
+    borderRadius: radii.lg,
     borderWidth: 1.5,
-    borderColor: colors.light.borderStrong,
-    backgroundColor: colors.light.surface,
+    borderColor: '#eadfd4',
+    backgroundColor: '#FFFBF8',
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: spacing.md,
   },
   inputFocused: {
     borderColor: colors.brand.pink,
-    backgroundColor: colors.light.surfaceWarm,
+    backgroundColor: '#FFFFFF',
+    shadowColor: colors.brand.pink,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.18,
+    shadowRadius: 8,
   },
   inputError: {
-    borderColor: colors.light.danger,
+    borderColor: colors.brand.pinkDeep,
   },
   input: {
     ...typography.body,
     flex: 1,
-    paddingVertical: spacing.sm,
-    color: colors.light.text,
+    paddingVertical: spacing.sm + 2,
+    color: '#2a1f24',
+    fontSize: 16,
   },
   toggle: {
     paddingLeft: spacing.xs,
@@ -120,6 +125,6 @@ const styles = StyleSheet.create({
   },
   error: {
     ...typography.caption,
-    color: colors.light.danger,
+    color: colors.brand.pinkDeep,
   },
 });

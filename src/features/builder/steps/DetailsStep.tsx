@@ -1,12 +1,13 @@
 import { useRef, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { ApiClientError } from '@/api/client';
 import { useUpdateMomentNamesMutation } from '@/api/hooks/useMoments';
+import { PageIntro } from '@/components/ui/PageIntro';
 import { TextField } from '@/components/ui/TextField';
 import { BuilderSaveStatus } from '@/features/builder/BuilderSaveStatus';
 import type { SaveStatus } from '@/features/builder/types';
-import { colors, spacing, typography } from '@/theme';
+import { spacing } from '@/theme';
 import type { Moment } from '@/types/api';
 
 type Props = {
@@ -74,8 +75,11 @@ export function DetailsStep({ moment }: Props) {
 
   return (
     <View style={styles.root}>
-      <Text style={styles.title}>Details</Text>
-      <Text style={styles.sub}>Who this Moment is for — and who it’s from.</Text>
+      <PageIntro
+        title="Details"
+        body="Who this Moment is for — and who it’s from."
+        style={styles.intro}
+      />
 
       <View style={styles.fields}>
         <TextField
@@ -119,15 +123,10 @@ export function DetailsStep({ moment }: Props) {
 
 const styles = StyleSheet.create({
   root: {
-    gap: spacing.md,
+    gap: spacing.lg,
   },
-  title: {
-    ...typography.titleSmall,
-  },
-  sub: {
-    ...typography.body,
-    color: colors.light.textSecondary,
-    marginTop: -spacing.sm,
+  intro: {
+    marginBottom: 0,
   },
   fields: {
     gap: spacing.md,

@@ -1,7 +1,10 @@
 /**
  * OurMoment brand colors — mirrored from web:
  * - resources/js/Components/home/brand.js
- * - resources/css/app.css (--moment-* + landing surfaces)
+ * - resources/css/app.css (.landing-light + --moment-*)
+ *
+ * Cream / light foundation + pink → yellow brand language.
+ * Prefer these tokens over hardcoded hex in screens.
  */
 export const colors = {
   brand: {
@@ -9,7 +12,10 @@ export const colors = {
     yellow: '#FFBC3A',
     pinkDeep: '#E85A5F',
     charcoal: '#1C1814',
+    charcoalLift: '#2E2420',
     soft: '#FFF5F0',
+    pinkSoft: 'rgba(255, 108, 113, 0.12)',
+    yellowSoft: 'rgba(255, 188, 58, 0.16)',
   },
 
   /** Warm light creator chrome (default app surface). */
@@ -18,13 +24,15 @@ export const colors = {
     surface: '#FFFFFF',
     surfaceWarm: '#FFFBF8',
     surfaceMuted: '#FFF5F0',
+    surfaceContainer: '#F3EEE6',
     border: 'rgba(28, 24, 20, 0.08)',
     borderStrong: 'rgba(28, 24, 20, 0.14)',
     text: '#1C1814',
     textSecondary: 'rgba(28, 24, 20, 0.64)',
     textMuted: 'rgba(28, 24, 20, 0.44)',
     overlay: 'rgba(28, 24, 20, 0.45)',
-    danger: '#D64545',
+    /** Aligns with landing-light --color-error */
+    danger: '#AA371C',
     success: '#2F9E6B',
     info: '#3B82C4',
   },

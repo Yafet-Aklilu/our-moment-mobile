@@ -26,31 +26,33 @@ export function BuilderFooter({
   return (
     <View style={styles.wrap}>
       <View style={styles.navRow}>
-        <View style={styles.half}>
+        <View style={styles.prevSlot}>
           <Button
             label="Previous"
-            variant="secondary"
+            variant="ghost"
             disabled={!canGoPrev}
             onPress={onPrev}
           />
         </View>
-        <View style={styles.half}>
+        <View style={styles.nextSlot}>
           <Button
             label={isLast ? 'Review' : 'Next'}
-            variant="soft"
+            variant="primary"
             disabled={!canGoNext && !isLast}
             onPress={onNext}
           />
         </View>
       </View>
-      <View style={styles.actions}>
-        <Button
-          label="Activate"
-          onPress={() => router.push(`/(app)/moments/${momentId}/activate`)}
-        />
-      </View>
+
+      <Button
+        label="Activate"
+        variant="soft"
+        onPress={() => router.push(`/(app)/moments/${momentId}/activate`)}
+        style={styles.activate}
+      />
+
       <Text style={styles.hint}>
-        Finish required steps before activating. The server decides credits and payment.
+        When you’re ready, activate to share. Credits and payment are handled next.
       </Text>
     </View>
   );
@@ -60,24 +62,29 @@ const styles = StyleSheet.create({
   wrap: {
     gap: spacing.sm,
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.sm,
+    paddingTop: spacing.md,
     borderTopWidth: 1,
     borderTopColor: colors.light.border,
-    backgroundColor: colors.light.background,
+    backgroundColor: colors.light.surfaceWarm,
   },
   navRow: {
     flexDirection: 'row',
+    alignItems: 'center',
     gap: spacing.sm,
   },
-  half: {
+  prevSlot: {
+    flexShrink: 0,
+  },
+  nextSlot: {
     flex: 1,
   },
-  actions: {
+  activate: {
     width: '100%',
   },
   hint: {
     ...typography.caption,
     textAlign: 'center',
     color: colors.light.textMuted,
+    paddingBottom: spacing.xs,
   },
 });

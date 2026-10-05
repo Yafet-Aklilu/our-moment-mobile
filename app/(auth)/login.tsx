@@ -5,10 +5,15 @@ import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useLoginMutation } from '@/api/hooks/useAuth';
 import { ApiClientError } from '@/api/client';
 import { Button } from '@/components/ui/Button';
+import { StatusBanner } from '@/components/ui/StatusBanner';
 import { TextField } from '@/components/ui/TextField';
 import { AuthScreen, AuthSwitchLink } from '@/features/auth/AuthScreen';
 import { colors, spacing, typography } from '@/theme';
 
+/**
+ * Runtime: app/(auth)/login → AuthScreen + TextField + Button
+ * Visual: pink→yellow wash + white floating card (GuestLayout parity).
+ */
 export default function LoginScreen() {
   const login = useLoginMutation();
   const [email, setEmail] = useState('');
@@ -35,7 +40,7 @@ export default function LoginScreen() {
   return (
     <AuthScreen
       title="Sign in"
-      subtitle="Sign in to continue creating and sending Moments."
+      subtitle="Welcome back — your Moments are waiting."
       footer={
         <AuthSwitchLink
           prompt="Don't have an account?"
@@ -57,7 +62,7 @@ export default function LoginScreen() {
       />
       <TextField
         label="Password"
-        placeholder="Enter your password"
+        placeholder="Your password"
         isPassword
         autoComplete="password"
         textContentType="password"
@@ -75,9 +80,11 @@ export default function LoginScreen() {
         </Link>
       </View>
 
-      {formError ? <Text style={styles.error}>{formError}</Text> : null}
+      {formError ? <StatusBanner message={formError} tone="error" /> : null}
 
-      <Button label="Sign in" onPress={() => void onSubmit()} loading={login.isPending} />
+      <View style={styles.cta}>
+        <Button label="Sign in" onPress={() => void onSubmit()} loading={login.isPending} />
+      </View>
     </AuthScreen>
   );
 }
@@ -85,14 +92,13 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   row: {
     alignItems: 'flex-end',
-    marginTop: -spacing.xs,
+    marginTop: -spacing.xxs,
   },
   forgot: {
     ...typography.label,
     color: colors.brand.pinkDeep,
   },
-  error: {
-    ...typography.caption,
-    color: colors.light.danger,
+  cta: {
+    marginTop: spacing.sm,
   },
 });
